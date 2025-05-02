@@ -1,0 +1,543 @@
+{
+    "watchList": [
+        {
+            "groupEntries": [
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "Instance",
+                    "pointerOffsets": [],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "vt",
+                    "pointerOffsets": [
+                        "0"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "objId",
+                    "pointerOffsets": [
+                        "88"
+                    ],
+                    "typeIndex": 1,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "b0",
+                    "pointerOffsets": [
+                        "b0"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "b8",
+                    "pointerOffsets": [
+                        "b8"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "SubBC",
+                    "pointerOffsets": [
+                        "bc"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "groupEntries": [
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "Instance",
+                            "pointerOffsets": [
+                                "bc",
+                                "0"
+                            ],
+                            "typeIndex": 2,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "b0",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "b0"
+                            ],
+                            "typeIndex": 1,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "b4",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "b4"
+                            ],
+                            "typeIndex": 2,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "b8",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "b8"
+                            ],
+                            "typeIndex": 2,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "bc.x",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "bc",
+                                "0"
+                            ],
+                            "typeIndex": 3,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "bc.y",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "bc",
+                                "4"
+                            ],
+                            "typeIndex": 3,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "bc.z",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "bc",
+                                "8"
+                            ],
+                            "typeIndex": 3,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "d8",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "d8"
+                            ],
+                            "typeIndex": 3,
+                            "unsigned": false
+                        },
+                        {
+                            "address": "809c2d90",
+                            "baseIndex": 0,
+                            "label": "SubE4",
+                            "pointerOffsets": [
+                                "bc",
+                                "0",
+                                "e4"
+                            ],
+                            "typeIndex": 2,
+                            "unsigned": false
+                        },
+                        {
+                            "groupEntries": [
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "b0",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "b0"
+                                    ],
+                                    "typeIndex": 2,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "b4",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "b4"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "b8",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "b8"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "bc",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "bc"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "c0",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "c0"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "c4",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "c4"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "c8",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "c8"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "cc",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "cc"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "d0",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "d0"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "d4",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "d4"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "d8",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "d8"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "dc",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "dc"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "e0",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "e0"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "e4",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "e4"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "e8",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "e8"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "ec",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "ec"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "f0",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "f0"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "f4",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "f4"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "f8",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "f8"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "fc",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "fc"
+                                    ],
+                                    "typeIndex": 3,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "000",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "100"
+                                    ],
+                                    "typeIndex": 2,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "004",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "104"
+                                    ],
+                                    "typeIndex": 2,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "008",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "108"
+                                    ],
+                                    "typeIndex": 2,
+                                    "unsigned": false
+                                },
+                                {
+                                    "address": "809c2d90",
+                                    "baseIndex": 0,
+                                    "label": "00c",
+                                    "pointerOffsets": [
+                                        "bc",
+                                        "0",
+                                        "e4",
+                                        "0",
+                                        "10c"
+                                    ],
+                                    "typeIndex": 2,
+                                    "unsigned": false
+                                }
+                            ],
+                            "groupName": "SubBCSubE4"
+                        }
+                    ],
+                    "groupName": "SubBC"
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "c0",
+                    "pointerOffsets": [
+                        "c0"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                },
+                {
+                    "address": "809c2d90",
+                    "baseIndex": 0,
+                    "label": "c4",
+                    "pointerOffsets": [
+                        "c4"
+                    ],
+                    "typeIndex": 2,
+                    "unsigned": false
+                }
+            ],
+            "groupName": "HoneBall"
+        }
+    ]
+}
