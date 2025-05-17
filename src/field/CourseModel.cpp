@@ -162,7 +162,7 @@ bool CourseModel::checkPointFull(const EGG::Vector3f& pos, const EGG::Vector3f& 
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -221,7 +221,7 @@ bool CourseModel::checkPointFullPush(const EGG::Vector3f& pos, const EGG::Vector
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -354,7 +354,7 @@ bool CourseModel::checkSphereFull(const EGG::Vector3f& pos, const EGG::Vector3f&
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -413,7 +413,7 @@ bool CourseModel::checkSphereFullPush(const EGG::Vector3f& pos, const EGG::Vecto
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -546,7 +546,7 @@ bool CourseModel::checkPointCachedFull(const EGG::Vector3f& pos, const EGG::Vect
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -605,7 +605,7 @@ bool CourseModel::checkPointCachedFullPush(const EGG::Vector3f& pos, const EGG::
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -738,7 +738,7 @@ bool CourseModel::checkSphereCachedFull(const EGG::Vector3f& pos, const EGG::Vec
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;
@@ -797,7 +797,7 @@ bool CourseModel::checkSphereCachedFullPush(const EGG::Vector3f& pos, const EGG:
   if (colInfo != nullptr) {
     colInfo->bboxLow.setZero();
     colInfo->bboxHigh.setZero();
-    colInfo->_50 = -FLT_MIN;
+    colInfo->movingFloorDist = -FLT_MIN;
     colInfo->wallDist = -FLT_MIN;
     colInfo->floorDist = -FLT_MIN;
     colInfo->colPerpendicularity = 0.0f;

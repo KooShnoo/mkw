@@ -4,6 +4,8 @@
 #include "egg/math/eggMatrix.hpp"
 #include "egg/math/eggMath.hpp"
 
+#include "KCollision.hpp"
+
 namespace Field {
 struct SoftWallColInfo {
   EGG::Vector3f bboxLow;
@@ -51,12 +53,12 @@ struct ColInfo : public ColInfoPartial {
   EGG::Vector3f floorNrm;
   // closest wall normal
   EGG::Vector3f wallNrm;
-  EGG::Vector3f _3c;
+  EGG::Vector3f movingFloorNrm;
   // distance to closest road
   f32 floorDist;
   // distance to closest wall
   f32 wallDist;
-  f32 _50;
+  f32 movingFloorDist;
   f32 colPerpendicularity;
   DrivableColInfo* drivableColInfo;
 

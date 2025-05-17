@@ -802,6 +802,7 @@ config.libs = [
         "src_dir": "src",
         "objects": [
             Object(NonMatching, "field/CourseModel.cpp"),
+            Object(NonMatching, "item/ItemObj.cpp"),
             Object(Matching, "field/CollisionEntries.cpp"),
             Object(NonMatching, "field/RKGndCol.cpp"),
             Object(Matching, "field/CourseColManager.cpp"),
