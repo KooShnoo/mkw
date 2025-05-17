@@ -133,7 +133,7 @@ bool ObjColManager::checkPointFull(const EGG::Vector3f& pos, const EGG::Vector3f
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -171,7 +171,7 @@ bool ObjColManager::checkPointFullPush(const EGG::Vector3f& pos, const EGG::Vect
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -294,7 +294,7 @@ bool ObjColManager::checkSphereFull(const EGG::Vector3f& pos, const EGG::Vector3
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -332,7 +332,7 @@ bool ObjColManager::checkSphereFullPush(const EGG::Vector3f& pos, const EGG::Vec
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -461,7 +461,7 @@ bool ObjColManager::checkPointCachedFull(const EGG::Vector3f& pos, const EGG::Ve
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -501,7 +501,7 @@ bool ObjColManager::checkPointCachedFullPush(const EGG::Vector3f& pos, const EGG
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -630,7 +630,7 @@ bool ObjColManager::checkSphereCachedFull(const EGG::Vector3f& pos, const EGG::V
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
@@ -670,7 +670,7 @@ bool ObjColManager::checkSphereCachedFullPush(const EGG::Vector3f& pos, const EG
     colInfoLocal.drivableColInfo = nullptr;
     colInfoLocal.bboxLow.setZero();
     colInfoLocal.bboxHigh.setZero();
-    colInfoLocal._50 = -FLT_MIN;
+    colInfoLocal.movingFloorDist = -FLT_MIN;
     colInfoLocal.wallDist = -FLT_MIN;
     colInfoLocal.floorDist = -FLT_MIN;
     colInfoLocal.colPerpendicularity = 0.0f;
