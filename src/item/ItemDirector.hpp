@@ -1,22 +1,21 @@
 #pragma once
 
 #include <rk_types.h>
+#include <rvl/mtx/mtx.h>
 
 #include "egg/core/eggDisposer.hpp"
 #include "kart/KartObjectProxy.hpp"
+#include "system/CourseMap.hpp"
 #include "ItemObj.hpp"
 
 namespace Item {
-    class ItemDirector;
-
-    ItemDirector * PtrItemDirector = 0;
-
     class ItemDirectorPlayer : public Kart::KartObjectProxy {
         u8 placeHolder[0x248 - 0xc];
     };
 
     class ItemDirector : public EGG::Disposer {
     public:
+        static ItemDirector * spInstance;
         u8 playerNum;
 
         ItemDirectorPlayer * playerList;
