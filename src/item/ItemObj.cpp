@@ -1,3 +1,4 @@
+#include "BaseItemData.hpp"
 #include "ItemDirector.hpp"
 #include "ItemObj.hpp"
 #include "gfx/GFXManager.hpp"
@@ -85,7 +86,7 @@ void ItemObj::onActivate() {
     } 
     
     ItemType item = this->itemId;
-    if (RelItemInfoArr[item][0x70]) {
+    if (ItemData::table[item].useLight) {
         GFX::LightManagerHolder *lightManagerHolder = GFX::gfxManager[0]->lightManagerHolder;
         s16 errorCode = -12;
         if ((u32)lightManagerHolder + 12 <= 0) {
@@ -97,7 +98,7 @@ void ItemObj::onActivate() {
             this->setLightSet(lightSet);
             bool isDrop = this->flags & FROM_DROP;
             if (!isDrop & ~FROM_DROP) {
-                ItemDirector *director = PtrItemDirector;
+                ItemDirector *director = ItemDirector::spInstance;
                 Kart::KartObjectProxy *kart = &director->playerList[this->ownerId];
                 GFX::LightSet *res = (GFX::LightSet*)kart->kartAccessor_48();
                 this->lightSet->copyFrom(res);
@@ -110,7 +111,7 @@ void ItemObj::onActivate() {
                 u8 lightSetIdx;
                 bool isDrop = this->flags & FROM_DROP;
                 if (!isDrop & ~FROM_DROP) {
-                    ItemDirector *director = PtrItemDirector;
+                    ItemDirector *director = ItemDirector::spInstance;
                     Kart::KartObjectProxy *kart = &director->playerList[this->ownerId];
                     GFX::LightSet *res = (GFX::LightSet*)kart->kartAccessor_48();
                     lightSetIdx = res->index;
