@@ -68,7 +68,6 @@ void ItemObj::modelEnable() {
 }
 
 void fn_1_5527C();
-extern u8 RelItemInfoArr[15][0x74];
 extern u8* FUN_80591434();
 extern "C" void Panic(...);
 extern "C" char fileName;
@@ -200,12 +199,52 @@ void ItemObj::onDespawn() {
 
 // 0x8079de34 - 0x8079dee0
 void ItemObj::loadFromRecvEvent(ItemType itemType, ItemRKNetEventItem *queueItem, bool isTrailHit, bool isDrop, u8 ownerId) {
-        
 }
+
+inline f64 min(f32 a, f32 b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+extern "C" void resetCollisionEntries(u32 &flag);
+extern void * PlayerHolder;
+extern "C" Kart::KartObjectProxy * PlayerHolder_getPlayer(void* playerHolder, u32 playerId);
 
 // 0x8079dee4 - 0x8079e1ec
 void ItemObj::onOnlineShot() {
+    ItemData *thing = ItemData::table;
+    f32 scaleMax = 0.8;
+    this->scaleFactor = min(scaleMax, ItemData::table[this->itemId].hitboxScale);
+    this->updateRes |= 0x40;
+    this->scale.z = scaleFactor;
+    this->scale.y = scaleFactor;
+    this->scale.x = scaleFactor;
 
+    ItemType itemId = this->itemId;
+    f32 hitboxHeight = ItemData::table[this->itemId].hitboxHeight;
+    f32 hitboxSize = ItemData::table[this->itemId].hitboxSize;
+    this->hitboxRadius = scaleFactor * hitboxSize;
+    this->hitboxHeight =  scaleFactor * hitboxHeight;
+    this->renderer->drawDistanceBack = hitboxSize * ItemData::table[this->itemId].drawDistBack;
+    this->lastYRotation.x = 0;
+    this->lastYRotation.y = 1;
+    this->lastYRotation.z = 0;
+
+    resetCollisionEntries(this->curCollisionFlag);
+    this->colInfo.bboxLow.setZero();
+    this->colInfo.bboxHigh.setZero();
+    this->colInfo.movingFloorDist = -1;
+    this->colInfo.wallDist = -1;
+    this->colInfo.floorDist = -1;
+    this->colInfo.colPerpendicularity = 0;
+    this->landCollisionFlag = 0;
+
+    Kart::KartObjectProxy * player = PlayerHolder_getPlayer(PlayerHolder, this->ownerId);
+    EGG::Vector3f bodyForward;
+    player->getBodyForward(bodyForward);
 }
 
 // 0x8079e1f0 - 0x8079e220
