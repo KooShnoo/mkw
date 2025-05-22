@@ -21,6 +21,10 @@ namespace Item {
 
         static void calcItemFlowLimits();
 
+        inline static ItemData * getById(ItemType type) {
+            return &table[type];
+        }
+
         
         void * initializeItemArrayFunc;
         u32 boxLimit;
