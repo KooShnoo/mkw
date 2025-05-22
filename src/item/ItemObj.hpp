@@ -5,6 +5,7 @@
 #include "ItemEventQueue.hpp"
 #include "render/ModelDirector.hpp"
 #include "field/CollisionInfo.hpp"
+#include <rvl/mtx/mtx.h>
 
 namespace Render {
     struct ObjectRenderer {
@@ -121,8 +122,8 @@ namespace Item {
         float quaternion[4];
         float invTransMtx[3][3];
         float position[3];
-        float speed[3];
-        float scale[3];
+        Vec speed;
+        Vec scale;
         float scaleFactor;
         
         u8 ownerId;
@@ -144,8 +145,8 @@ namespace Item {
         void * boxColEntity;
         float hitboxHeight;
         float hitboxRadius;
-        float lastPosition[3];
-        float lastYRotation[3];
+        Vec lastPosition;
+        Vec lastYRotation;
 
         /** 0xd4 **/ u32 curCollisionFlag;
         /** 0xe0? */ Field::ColInfo colInfo;
