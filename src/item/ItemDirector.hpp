@@ -3,10 +3,10 @@
 #include <rk_types.h>
 #include <rvl/mtx/mtx.h>
 
+#include "ItemObj.hpp"
 #include "egg/core/eggDisposer.hpp"
 #include "kart/KartObjectProxy.hpp"
 #include "system/CourseMap.hpp"
-#include "ItemObj.hpp"
 
 namespace Item {
     class ItemDirectorPlayer : public Kart::KartObjectProxy {
@@ -23,7 +23,8 @@ namespace Item {
 
         u8 itemTable[540];
         u8 field_0x264[0x40];
-        ItemObj itemObj;
+        u8 itemObj[0x42c - 0x2a4]; //TODO: base ItemObj class
         int tripleLimit;
     };
+    static_assert(sizeof(ItemDirector) == 0x430);
 }

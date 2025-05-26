@@ -1,11 +1,13 @@
-#pragma once
 
 #include <rk_types.h>
 
+#include "BaseItemData.hpp"
+#include "DragItemKartObject.hpp"
 #include "ItemEventQueue.hpp"
 #include "render/ModelDirector.hpp"
 #include "field/CollisionInfo.hpp"
-#include <rvl/mtx/mtx.h>
+#include "geo/BoxColManager.hpp"
+#include <egg/math/eggVector.hpp>
 
 namespace Render {
     struct ObjectRenderer {
@@ -53,7 +55,7 @@ namespace Item {
     typedef enum ItemObjFlags1 {
         NONE = 0,
         TRAILED = 0x1 /* 00 */,
-        x2 = 0x2 /* 01 */,
+        EXISTS = 0x2 /* 01 */,
         DROPPED = 0x4 /* 02 */,
         GROUNDED = 0x8 /* 03 */,
         x10 = 0x10 /* 04 */,
@@ -73,9 +75,9 @@ namespace Item {
         x40000 = 0x40000 /* 18 */,
         x80000 = 0x80000 /* 19 */,
         x100000 = 0x100000 /* 20 */,
-        x200000 = 0x200000 /* 21 */,
-        x400000 = 0x400000 /* 22 */,
-        x800000 = 0x800000 /* 23 */,
+        LOCAL_BROKEN = 0x200000 /* 21 */,
+        LOCAL_VANISHED = 0x400000 /* 22 */,
+        LOCAL_DESPAWNED = 0x800000 /* 23 */,
         x1000000 = 0x1000000 /* 24 */,
         POS_PREV_OVERRIDDEN = 0x2000000 /* 25 */,
         x4000000 = 0x4000000 /* 26 */,
@@ -87,6 +89,9 @@ namespace Item {
 
     class ItemObj {
     public:
+        typedef void (ItemObj::*UpdateFunc)();
+        typedef void (ItemObj::*BounceHitFunc)();
+
         void loadResources();
 
         ItemObj();
@@ -109,6 +114,10 @@ namespace Item {
         virtual void onOnlineShot();
         virtual void onOnlineDrop();
 
+        void scaleHitbox(bool useRadius);
+        void fixScale();
+        void setScale(EGG::Vector3f * scale);
+
         // Placeholders:
         void initDefaultRenderer();
         void initRenderer(char *fileName, char *resName, char *shadowResName, int unk1, char **anims, int unk2, void* unk3, int unk4);
@@ -119,11 +128,10 @@ namespace Item {
         u16 netIdentifier; /* u8[0] = owner, u8[1] = counter */
         
         //TODO: change to vectors
-        float quaternion[4];
-        float invTransMtx[3][3];
-        float position[3];
-        Vec speed;
-        Vec scale;
+        EGG::Quatf quaternion;
+        RowVec34 transform;
+        EGG::Vector3f speed;
+        EGG::Vector3f scale;
         float scaleFactor;
         
         u8 ownerId;
@@ -142,15 +150,15 @@ namespace Item {
         Render::ObjectRenderer * renderer;
         Render::ModelDirector * lightModel;
         GFX::LightSet * lightSet;
-        void * boxColEntity;
+        BoxColUnit * boxColEntity;
         float hitboxHeight;
         float hitboxRadius;
         Vec lastPosition;
         Vec lastYRotation;
 
-        /** 0xd4 **/ u32 curCollisionFlag;
-        /** 0xe0? */ Field::ColInfo colInfo;
-        void * maybeBelongsToColInfoButIdk;
+        u32 curCollisionFlag;
+        Field::ColInfo colInfo;
+        Field::DrivableColInfo * drivableColInfo2;
         u32 landCollisionFlag;
         u8 onlineTarget;
         
@@ -158,12 +166,11 @@ namespace Item {
         float field43_0x144[3];
         float someRotationVec[3];
         short someCounter;
+        short vanishCountdown;
         
         u32 activeTime;
         u32 counter;
 
-        typedef void (ItemObj::*UpdateFunc)();
-        typedef void (ItemObj::*BounceHitFunc)();
         UpdateFunc updateFunc;
         BounceHitFunc bounceHitFunc;
 
