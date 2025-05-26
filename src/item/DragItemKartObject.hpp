@@ -1,29 +1,15 @@
 #pragma once
 
 #include <rk_types.h>
-#include <rvl/mtx/mtx.h>
 
+#include "BaseItemData.hpp"
+#include "ItemObj.hpp"
 #include "kart/KartObjectProxy.hpp"
 #include "ItemDirector.hpp"
 
 namespace Item {
-    struct RowVec34 {
-        Vec x;
-        Vec y;
-        Vec z;
-        Vec t;
-
-        void normalizeZY();
-        void normalizeXZ();
-        void normalizeYX();
-        void normalizeZX();
-        void normalizeXY();
-        void normalizeYZ();
-
-        void calcDecomposedQuat(Quaternion *mtxQuat, Quaternion *decompQuat);
-        void calcQuatAndRotation(Quaternion *mtxQuat, float angle);
-        void rotate(RowVec34 *out, s16 angle);
-    };
+    class ItemObj;
+    struct RowVec34;
     
     class DragItemKartObject : public Kart::KartObjectProxy {
     public:
@@ -76,7 +62,7 @@ namespace Item {
         void forceRelease();
         void netItemsDespawn();
         void netCalcItemDespawn(ItemObj * item, u32 targetDragNum);
-        void netItemsDespawn();
+        void netItemsDespawnAll();
 
     private:
         ItemDirectorPlayer * player;
@@ -103,11 +89,10 @@ namespace Item {
         Vec scale;
         u8 field_0xbc[0x154-0xbc];
 
-        bool forceRelease;
+        bool mForceRelease;
 
         u8 field_0x155[0x17a-0x155];
         s16 axisRotation;
         u32 field_0x17c;
     };
-    static_assert(sizeof(DragItemDirector) == 0x180);
 }
