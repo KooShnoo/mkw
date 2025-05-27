@@ -1,8 +1,8 @@
+#pragma once
 
 #include <rk_types.h>
 
-#include "BaseItemData.hpp"
-#include "DragItemKartObject.hpp"
+#include "BaseItemMath.hpp"
 #include "ItemEventQueue.hpp"
 #include "render/ModelDirector.hpp"
 #include "field/CollisionInfo.hpp"
@@ -89,9 +89,6 @@ namespace Item {
 
     class ItemObj {
     public:
-        typedef void (ItemObj::*UpdateFunc)();
-        typedef void (ItemObj::*BounceHitFunc)();
-
         void loadResources();
 
         ItemObj();
@@ -121,6 +118,9 @@ namespace Item {
         // Placeholders:
         void initDefaultRenderer();
         void initRenderer(char *fileName, char *resName, char *shadowResName, int unk1, char **anims, int unk2, void* unk3, int unk4);
+    
+        typedef void (ItemObj::*UpdateFunc)();
+        typedef void (ItemObj::*BounceHitFunc)();
     private:
         ItemType itemId;
         u16 itemHitPriority;

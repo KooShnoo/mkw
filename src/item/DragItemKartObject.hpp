@@ -3,6 +3,7 @@
 #include <rk_types.h>
 
 #include "BaseItemData.hpp"
+#include "BaseItemMath.hpp"
 #include "ItemObj.hpp"
 #include "kart/KartObjectProxy.hpp"
 #include "ItemDirector.hpp"

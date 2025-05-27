@@ -1,15 +1,13 @@
 #pragma once
 
 #include <rk_types.h>
-#include <egg/math/eggVector.hpp>
 
-#include "system/CourseMap.hpp"
 #include "ItemObj.hpp"
+#include "system/CourseMap.hpp"
 
 extern "C" void getNormVector(EGG::Vector3f * out, EGG::Vector3f * in);
 namespace Item {
     class ItemObj;
-    
     struct ItemData {
         static ItemData table[15];
 
@@ -78,45 +76,4 @@ namespace Item {
         float shadowScale;
         bool useLight;
     };
-
-    struct RowVec34 {
-        EGG::Vector3f x;
-        EGG::Vector3f y;
-        EGG::Vector3f z;
-        EGG::Vector3f t;
-
-        void normalizeZY();
-        void normalizeXZ();
-        void normalizeYX();
-        void normalizeZX();
-        void normalizeXY();
-        void normalizeYZ();
-
-        void calcDecomposedQuat(Quaternion *mtxQuat, Quaternion *decompQuat);
-        void calcQuatAndRotation(Quaternion *mtxQuat, float angle);
-        void rotate(RowVec34 *out, s16 angle);
-
-        inline void mirrorZ() {
-            f32 scale = -1;
-            nw4r::math::VEC3Scale(&this->z, &this->z, scale);
-        }
-
-        inline void normaliseY() {
-            bool test = this->z.y * this->z.y < (f32)0.99800104;
-            if (test) {
-                this->z.y = 0;
-                EGG::Vector3f input = this->z;
-                getNormVector(&this->z, &input);
-                PSVECCrossProduct(this->y, this->z, this->x);
-            } else {
-                this->z.x = 0;
-                this->z.y = 0;
-                this->z.z = 1;
-                this->x.x = 1;
-                this->x.y = 0;
-                this->x.z = 0;
-            }
-        }
-    };
-    static_assert(sizeof(RowVec34) == 48);
 }

@@ -324,30 +324,9 @@ void ItemObj::fixScale() {
     this->renderer->drawDistanceBack = this->hitboxRadius * drawDistBack;
 }
 
-inline nw4r::math::VEC3* VEC3Scale2(register nw4r::math::VEC3* pOut, const register nw4r::math::VEC3* p, register f32 scale)
-{
-#if defined(NW4R_MATH_BROADWAY)
-    register f32 a, b;
-    asm
-    {
-        psq_l    a, 0(p), 0, 0;
-        ps_muls0 b, a, scale;
-        psq_l    a, 8(p), 1, 0;
-        psq_st   b, 0(pOut), 0, 0;
-        ps_muls0 b, a, scale;
-        psq_st   b, 8(pOut), 1, 0;
-    }
-#else
-    pOut->x = p->x * scale;
-    pOut->y = p->y * scale;
-    pOut->z = p->z * scale;
-#endif
-    return pOut;
-}
-
 // 0x8079edb4 - 0x8079ee2c
 void ItemObj::setScale(EGG::Vector3f * scale) {
-    VEC3Scale2(&this->scale, scale, this->scaleFactor);
+    VECMultiply(&this->scale, scale, this->scaleFactor);
     this->updateRes = this->updateRes | 0x40;
     f32 hitboxScale;
     u32 itemId = this->itemId;
