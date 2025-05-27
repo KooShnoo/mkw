@@ -7,6 +7,7 @@
 #include "render/ModelDirector.hpp"
 #include "field/CollisionInfo.hpp"
 #include "geo/BoxColManager.hpp"
+#include "snd/ItemSnd.hpp"
 #include <egg/math/eggVector.hpp>
 
 namespace Render {
@@ -89,7 +90,8 @@ namespace Item {
 
     class ItemObj {
     public:
-        void loadResources();
+        virtual void initModel();
+        virtual void loadResources();
 
         ItemObj();
 
@@ -111,6 +113,8 @@ namespace Item {
         virtual void onOnlineShot();
         virtual void onOnlineDrop();
 
+        void init(u16 id, u16 typeIndex, eItemType itemType);
+
         void scaleHitbox(bool useRadius);
         void fixScale();
         void setScale(EGG::Vector3f * scale);
@@ -123,8 +127,8 @@ namespace Item {
         typedef void (ItemObj::*BounceHitFunc)();
     private:
         ItemType itemId;
-        u16 itemHitPriority;
-        u16 field3_0xa;
+        u16 id; /* Global */
+        u16 typeIndex; /* Id of type */
         u16 netIdentifier; /* u8[0] = owner, u8[1] = counter */
         
         //TODO: change to vectors
@@ -158,7 +162,7 @@ namespace Item {
 
         u32 curCollisionFlag;
         Field::ColInfo colInfo;
-        Field::DrivableColInfo * drivableColInfo2;
+        Field::DrivableColInfo * drivableColInfo;
         u32 landCollisionFlag;
         u8 onlineTarget;
         
@@ -174,7 +178,7 @@ namespace Item {
         UpdateFunc updateFunc;
         BounceHitFunc bounceHitFunc;
 
-        void * soundActor;
+        Sound::ItemSnd * soundActor;
         bool field52_0x184;
         bool belowDeadPlane;
     };

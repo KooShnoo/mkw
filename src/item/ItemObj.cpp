@@ -9,8 +9,8 @@ namespace Item {
 
 // 0x8079d804 - 0x8079d848
 void ItemObj::loadResources() {
-        // TODO: Could be inlined loadResModelByName
-        this->initDefaultRenderer();
+    // TODO: Could be inlined loadResModelByName
+    this->initRenderer(0, "wii_controller", 0, 0, 0, 0, 0, 0);
 }
 
 // 0x8079d8bc - 0x8079d91c
@@ -258,8 +258,8 @@ void ItemObj::onOnlineShot() {
 
     QuatFromRowVec34(&this->quaternion, &this->transform);
     this->targetYScale = 0;
-    if (this->drivableColInfo2) {
-        FUN_807bd7b4(this->drivableColInfo2);
+    if (this->drivableColInfo) {
+        FUN_807bd7b4(this->drivableColInfo);
     }
 
     this->someCounter = 5;
@@ -287,6 +287,29 @@ void ItemObj::onOnlineShot() {
 
 // 0x8079e1f0 - 0x8079e220
 void ItemObj::onOnlineDrop() {
+}
+
+// 0x8079e224 - 0x8079e2fc
+void ItemObj::init(u16 id, u16 typeIndex, eItemType itemType) {
+    this->itemId = itemType;
+    this->id = id;
+    this->typeIndex = typeIndex;
+    this->loadResources();
+    this->updateRes = 0;
+    this->flags = NONE;
+    this->flags2 = 0;
+
+    this->soundActor = new Sound::ItemSnd();
+    this->soundActor->_vf0x118(this, this->itemId);
+
+    if (ItemData::table[this->itemId].canLand || 
+        itemType == ITEMOBJ_BANANA || 
+        itemType == ITEMOBJ_FAKE_ITEM_BOX || 
+        itemType == ITEMOBJ_BOMB
+    ) {
+        this->colInfo.createDrivableColInfo();
+    }
+    this->drivableColInfo = this->colInfo.drivableColInfo;
 }
 
 // 0x8079ec98 - 0x8079ed18
@@ -344,9 +367,7 @@ void ItemObj::setScale(EGG::Vector3f * scale) {
 //Placeholders:
 //-------------------------------
 
-// Inlined, logically exists before 0x807a0040
-void ItemObj::initDefaultRenderer() {
-        this->initRenderer(0, "wii_controller", 0, 0, 0, 0, 0, 0);
-}
+// void ItemObj::initDefaultRenderer() {
+// }
 
 }
