@@ -30,6 +30,8 @@ KartState::KartState(KartSettings* settings) {
   case RaceConfig::Player::TYPE_GHOST:
     set(KART_FLAG_GHOST);
     break;
+  default:
+    break;
   }
 
   if (isPlayerOnlineLocal) {

@@ -124,7 +124,95 @@ KrtFile** RaceManager::getKrtFile() {
         return (files[0] != nullptr) ? files : nullptr;
     }
 }
+
+// // suspicious
+// template <typename T, typename TData>
+// u16 MapdataAccessorBase<T, TData>::size() const {
+//     if (this != 0) {
+//         return numEntries;
+//     } else {
+//         return 0;
+//     }
+// }
+
+s8 CourseMap::lastKcpType() const {
+    bool validSize = mpCheckPoint->size() != 0 && mpCheckPath->size() != 0;
+    if (validSize) {
+        return mpCheckPoint->m_lastKcpType;
+    } else {
+        return -1;
+    }
 }
+
+void RaceManagerPlayer::decrementLap() {
+    if ((flags & 2) != 0) {
+        // if (mBFinished) {
+        return;
+    }
+    s8 maxKcp = CourseMap::instance()->lastKcpType();
+    mCurrentLap -= 1;
+    mMaxKcp = maxKcp;
+}
+
+/// @brief whether @param nextCheckpointId is directly after @param checkpoint
+/// @addr{Inlined in 0x80534DF8}
+bool areCheckpointsSubsequent(MapdataCheckPoint *checkpoint, u32 checkpointId) {
+    for (s32 i = 0; i < checkpoint->nextCount(); i++) {
+        if (checkpointId == checkpoint->nextPoint(i)->id()) { return true; }
+    }
+
+    return false;
+}
+
+MapdataCheckPoint *RaceManagerPlayer::calcCheckpoint(u16 checkpointId, f32 checkpointCompletion, bool isRemote) {
+    u16 oldCheckpointId = mCheckpointId;
+    mCheckpointId = checkpointId;
+    // CourseMap *courseMap = CourseMap::instance().;
+    f32 oneOverOnePlusMaxDepth = CourseMap::instance()->checkPath()->lapProportion();
+    MapdataCheckPath *checkPath = CourseMap::instance()->checkPath()->findCheckpathForCheckpoint(checkpointId);
+    f32 bar = checkPath->mOneOverCount * oneOverOnePlusMaxDepth;
+    mCheckpointFactor = bar;
+    f32 foo =
+        checkPath->mDfsDepth * oneOverOnePlusMaxDepth + (mCheckpointFactor * (checkpointId - checkPath->mpData->start));
+    mCheckpointStartLapCompletion = foo;
+    foo += checkpointCompletion * bar;
+    f32 newLapCompletion = mLapCompletion - foo;
+    MapdataCheckPoint *newCheckpoint = CourseMap::instance()->getCheckPoint(checkpointId);
+    s8 respawn = newCheckpoint->data()->jugemIndex;
+    if (respawn >= 0) { mRespawn = respawn; }
+    u8 type = newCheckpoint->type();
+    MapdataCheckPoint *oldCheckpoint = CourseMap::instance()->getCheckPoint(oldCheckpointId);
+
+    if (isRemote) {
+        if (newLapCompletion < 0.6f) {
+            decrementLap();
+        } else if (newLapCompletion > -0.6f) { // idk what it compares against
+            endLap();
+        }
+    } else {
+        // if (type != -1) {
+        if (newCheckpoint->isFinishLine()) {
+            if (type > mMaxKcp) {
+                mMaxKcp = type;
+            } else if (mMaxKcp == CourseMap::instance()->lastKcpType()) {
+                if ((type == 0 && areCheckpointsSubsequent(oldCheckpoint, checkpointId)) || newLapCompletion > 0.95f) {
+                    endLap();
+                }
+            }
+            mCurrentKcp = type;
+        }
+        if ((newCheckpoint->isFinishLine() && areCheckpointsSubsequent(newCheckpoint, checkpointId)) ||
+            newLapCompletion < -0.95f) {
+            decrementLap();
+        }
+    }
+
+    mLapCompletion = newLapCompletion; //  incorrect sruct?
+
+    return newCheckpoint;
+}
+
+} // namespace System
 
 // needs KartObjectManager definitions
 #ifdef WIP_DECOMP
