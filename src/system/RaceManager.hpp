@@ -117,41 +117,54 @@ public:
     int currentBit;
 };
 
+class MapdataCheckPoint;
 class RaceManagerPlayer {
 public:
   RaceManagerPlayer(u8 idx, u8 lapCount);
   void updateGpRankScore();
   virtual ~RaceManagerPlayer();
 
-  unk32 field_0x4;
-  s8 idx;
-  u16 checkpointId;
-  float raceCompletion;
-  float raceCompletionMax;
-  float checkpointFactor;
-  float checkpointStartLapCompletion;
-  float lapCompletion;
-  s8 position;
-  s8 respawn;
-  u16 battleScore;
-  s16 currentLap;
-  s8 maxLap;
-  s8 currentKcp;
-  s8 maxKcp;
-  u32 frameCounter;
-  u32 framesInFirstPlace;
-  s32 unk34;
-  RaceManagerPlayerFlags flags;
-  Time* lapFinishTimes;
-  Time* raceFinishTime;
-  u32 somethingRaceEndMessageOnline;
-  KPadPlayer* kpadPlayer;
-  unk8 unk_4c_50[0x50-0x4c];
-  u16 playersAheadFlags;
-  s8 field36_0x52;
-  s8 finishingPosition;
+    // void init();
+    // void *inputs() const;
+
+    // private:
+    u8 _0[4];
+    s8 mIdx;
+    u16 mCheckpointId;
+    f32 mRaceCompletion;
+    f32 mRaceCompletionMax;
+    f32 mCheckpointFactor;
+    f32 mCheckpointStartLapCompletion;
+    f32 mLapCompletion;
+    s8 mRespawn;
+    u16 mBattleScore;
+    s16 mCurrentLap;
+    s8 mMaxLap;
+    s8 mCurrentKcp;
+    s8 mMaxKcp;
+    u32 mFrameCounter;
+    // /// @name raceManagerPlayerFlags
+    // /// The bitfield at offset 0x38.
+    // /// @{
+    // bool m_bInRace;          ///< field 0x01
+    // bool m_bFinished;        ///< field 0x02
+    // bool m_bDrivingWrongWay; ///< field 0x04
+    // bool m_bStopped;         ///< field 0x20
+    // /// @}
+    u32 framesInFirstPlace;
+    u32 flags;
+    Time *lapFinishTimes;
+    Time *raceFinishTime;
+    KPadPlayer *kpadPlayer;
+    unk8 unk_4c_50[0x50 - 0x4c];
+    u16 playersAheadFlags;
+    s8 field36_0x52;
+    s8 finishingPosition;
+    void decrementLap();
+    void endLap(); ///< @todo TODO
+    MapdataCheckPoint *calcCheckpoint(u16 checkpointId, f32 checkpointCompletion, bool isRemote);
 };
-static_assert(sizeof(RaceManagerPlayer) == 0x54);
+// static_assert(sizeof(RaceManagerPlayer) == 0x54);
 
 struct KrtFile {
     u32 magic;

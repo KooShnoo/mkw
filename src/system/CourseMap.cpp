@@ -308,10 +308,99 @@ MapdataItemPath* CourseMap::getItemPath(u16 i) const {
   return i < count ? mpItemPath->get(i) : nullptr;
 }
 
+void MapdataCheckPathAccessor::loadPaths() {
+    // maximum number of checkpaths one could traverse through in a lap
+    s8 maxDepth = -1;
+    get(0)->findDepth(0, *this);
+    for (u16 i = 0; i < size(); i++) {
+        // u8 depth = get(i)->m_depth;
+        if (get(i)->mDfsDepth > maxDepth) { maxDepth = get(i)->mDfsDepth; }
+    }
+    mLapProportion = 1.0f / (maxDepth + 1.0f);
+}
 
-MapdataCheckPoint* CourseMap::getCheckPoint(u16 i) const {
-  u16 count = mpCheckPoint ? mpCheckPoint->size() : 0;
-  return i < count ? mpCheckPoint->get(i) : 0;
+void MapdataCheckPoint::setPrevKcpId(s8 prevKcpId) {
+    s8 lapChk = mpData->checkArea;
+    if (lapChk == -1) {
+        mPrevKcpId = prevKcpId;
+    } else {
+        mPrevKcpId = lapChk;
+    }
+}
+
+MapdataCheckPath *MapdataCheckPathAccessor::findCheckpathForCheckpoint(u16 checkpointId) {
+    MapdataCheckPath *checkpath;
+    for (u16 i = 0; i < size(); i++) {
+        checkpath = get(i);
+        if (checkpath->isPointInPath(checkpointId)) { return checkpath; }
+    }
+    return 0;
+}
+
+void MapdataCheckPath::findDepth(s8 depth, const MapdataCheckPathAccessor &accessor) {
+    if (mDfsDepth != -1) { return; }
+
+    mDfsDepth = depth;
+
+    for (u16 i = 0; i < 6; i++) {
+        u16 nextID = getNext(i);
+        if (nextID == 0xff) { continue; }
+        MapdataCheckPath *next = accessor.get(nextID);
+        next->findDepth(depth + 1, accessor);
+    }
+}
+
+// https://decomp.me/scratch/ltGgQ matched
+void MapdataCheckPointAccessor::init() {
+    if (size() == 0) { return; }
+
+    findFinishAndLastKcp();
+    MapdataCheckPoint *finishLine = get(m_finishLineCheckpointId);
+    finishLine->linkPrevKcpIds(0);
+    CourseMap::instance()->clearCheckpointFlags();
+    m_meanTotalDistance = calculateMeanTotalDistance();
+}
+
+inline void MapdataCheckPointAccessor::findFinishAndLastKcp() {
+    u16 ckptId;
+    s16 finishLineCheckpointId;
+    s8 lastKcpType = -1;
+    finishLineCheckpointId = -1;
+
+    for (ckptId = 0; ckptId < size(); ckptId++) {
+        MapdataCheckPoint *lastCheckpoint = get(ckptId);
+        lastCheckpoint->initCheckpointLinks(this, ckptId);
+        lastCheckpoint = get(ckptId);
+        s8 cpType = lastCheckpoint->type();
+        if (cpType == 0) { finishLineCheckpointId = ckptId; }
+
+        if (cpType > lastKcpType) { lastKcpType = cpType; }
+    }
+    m_lastKcpType = lastKcpType;
+    m_finishLineCheckpointId = finishLineCheckpointId;
+}
+
+/// @brief computes @ref m_prevKcpId for each checkpoint.
+/// @details @ref isPlayerFlagged indicates that a checkpoint has been visited, to prevent infinite
+/// recursion.
+void MapdataCheckPoint::linkPrevKcpIds(u8 prevKcpId) {
+    setPrevKcpId(prevKcpId);
+    setPlayerFlags(0);
+    for (s32 i = 0; i < nextCount(); i++) {
+        if (nextPoint(i)->isPlayerFlagged(0)) { continue; }
+        // some sort of assert?
+        // "this might be an inline depth meme(original code might've had asserts here) which add (void)0"
+        (void)0;
+        (void)0;
+        (void)0;
+        (void)0;
+        nextPoint(i)->linkPrevKcpIds(mPrevKcpId);
+    }
+}
+
+MapdataCheckPoint *CourseMap::getCheckPoint(u16 i) const {
+    u16 count = mpCheckPoint ? mpCheckPoint->size() : 0;
+    return i < count ? mpCheckPoint->get(i) : 0;
 }
 
 MapdataCheckPath* CourseMap::getCheckPath(u16 i) const {

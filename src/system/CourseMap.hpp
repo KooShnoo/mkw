@@ -1,5 +1,6 @@
 #pragma once
 
+#include "system/RaceManager.hpp"
 #include <rk_types.h>
 
 #include <decomp.h>
@@ -24,19 +25,19 @@ public:
   u16 numEntries;                        //!< [+0x04]
   const KmpSectionHeader* sectionHeader; //!< [+0x08]
 
-  /*const TData *cdata(size_t i) const {
-      if (i < 0 || i > numEntries) {
-          return nullptr;
-      }
-      return entryAccessors[i]->m_data;
-  }*/
-  MapdataAccessorBase(const KmpSectionHeader* header)
-      : entries(nullptr), numEntries(0), sectionHeader(header) {}
-  T* get(u16 i) const {
-    return i < this->numEntries ? this->entries[i] : nullptr;
-  }
-  s8 getExtraValue() const;
-  u16 size() const { return numEntries; }
+    /*const TData *cdata(size_t i) const {
+        if (i < 0 || i > numEntries) {
+            return nullptr;
+        }
+        return entryAccessors[i]->m_data;
+    }*/
+    MapdataAccessorBase(const KmpSectionHeader *header) : entries(nullptr), numEntries(0), sectionHeader(header) {}
+    T *get(u16 i) const {
+        if (i < this->numEntries) { return this->entries[i]; }
+        return 0;
+    }
+    s8 getExtraValue() const;
+    u16 size() const { return numEntries; }
 
   inline void init(const TData* start, u16 count) {
     if (count != 0) {
@@ -122,21 +123,25 @@ private:
 };
 static_assert(sizeof(MapdataCannonPoint) == 0x4);
 
+class MapdataCheckPathAccessor;
 class MapdataCheckPath {
 public:
-  struct SData {
-    u8 start;
-    u8 size;
+    struct SData {
+        u8 start;
+        u8 size;
+        u8 last[6];
+        u8 next[6];
+    };
+    MapdataCheckPath(const SData *data);
+    void findDepth(s8 depth, const MapdataCheckPathAccessor &accessor);
+    u16 getNext(u16 i) const { return mpData->next[i]; }
+    u8 end() const { return mpData->start + mpData->size - 1; }
 
-    u8 last[6];
-    u8 next[6];
-  };
-
-  MapdataCheckPath(const SData* data);
-
-private:
-  SData* mpData;
-  u8 _04[0x0c - 0x04];
+    bool isPointInPath(u16 checkpointId) const { return mpData->start <= checkpointId && checkpointId <= end(); }
+    // private:
+    const SData *mpData;
+    s8 mDfsDepth;
+    f32 mOneOverCount;
 };
 static_assert(sizeof(MapdataCheckPath) == 0xc);
 
@@ -147,53 +152,73 @@ struct LinkedCheckpoint {
   EGG::Vector2f p1diff;
   f32 distance;
 };
+
+class MapdataCheckPointAccessor;
 class MapdataCheckPoint {
 public:
-  struct SData {
-    EGG::Vector2f left;
-    EGG::Vector2f right;
-    u8 jugemIndex;
-    u8 lapCheck;
-    u8 prevPt;
-    u8 nextPt;
-  };
-  enum Completion {
-    Completion_0,
-    Completion_1,
-    Completion_2,
-  };
-  MapdataCheckPoint(const SData* data);
-  Completion checkSectorAndDistanceRatio(const EGG::Vector3f& pos,
-                                         f32* distanceRatio) const;
-  bool isPlayerFlagged(s32 playerIdx) const { return mFlags & 1 << playerIdx; }
-  void setPlayerFlags(s32 playerIdx) { mFlags |= 1 << playerIdx; }
-  void resetFlags() { mFlags = 0; }
-  SData* data() const { return mpData; }
-  s32 nextCount() const { return mNextCount; }
-  s32 prevCount() const { return mPrevCount; }
-  s32 id() const { return mId; }
-  MapdataCheckPoint* prevPoint(s32 i) const { return mpPrevPoints[i]; }
-  const LinkedCheckpoint& nextPoint(s32 i) const { return mNextPoints[i]; }
+    struct SData {
+        EGG::Vector2f left;
+        EGG::Vector2f right;
+        u8 jugemIndex;
+        s8 checkArea;
+        u8 prevPt;
+        u8 nextPt;
+    };
+    enum SectorOccupancy {
+        InsideSector,  ///< Player is inside the given checkpoint group
+        OutsideSector, ///< Player is outside the given checkpoint group
+        BetweenSides,  ///< Player is between sides of the checkpoint group but not
+                       ///< between this checkpoint and next
+    };
+    // no enum class in cpp03
+    struct CheckArea {
+        enum {
+            NormalCheckpoint = -1, ///< Only used for picking respawn position
+            FinishLine = 0,        ///< Triggers a lap change
+        };
+    };
+    MapdataCheckPoint(const SData *data);
+    SectorOccupancy checkSectorAndDistanceRatio(const EGG::Vector3f &pos, f32 *distanceRatio) const;
+    bool isPlayerFlagged(s32 playerIdx) const { return mFlags & 1 << playerIdx; }
+    void setPlayerFlags(s32 playerIdx) { mFlags |= 1 << playerIdx; }
+    void resetFlags() { mFlags = 0; }
+    SData *data() const { return mpData; }
+    s32 nextCount() const { return mNextCount; }
+    s32 prevCount() const { return mPrevCount; }
+    s32 id() const { return mId; }
+    MapdataCheckPoint *prevPoint(s32 i) const { return mpPrevPoints[i]; }
+    inline MapdataCheckPoint *nextPoint(s32 i) const {
+        if (i < nextCount()) { return mNextPoints[i].checkpoint; }
+        return 0;
+    }
+    friend class MapdataCheckPointAccessor;
+    friend class RaceManagerPlayer;
 
 private:
-  bool checkSector(const LinkedCheckpoint& next, const EGG::Vector2f& p0,
-                   const EGG::Vector2f& p1) const;
-  bool checkDistanceRatio(const LinkedCheckpoint& next, const EGG::Vector2f& p0,
-                          const EGG::Vector2f& p1, f32* distanceRatio) const;
-  Completion checkSectorAndDistanceRatio_(const LinkedCheckpoint& next,
-                                          const EGG::Vector2f& p0,
-                                          const EGG::Vector2f& p1,
-                                          f32* distanceRatio) const;
-  SData* mpData;
-  u16 mNextCount;
-  u16 mPrevCount;
-  EGG::Vector2f mMidpoint;
-  EGG::Vector2f mDir;
-  u16 mFlags;
-  u16 mId;
-  u8 _1c[0x20 - 0x1c];
-  MapdataCheckPoint* mpPrevPoints[6];
-  LinkedCheckpoint mNextPoints[6];
+    // https://decomp.me/scratch/jYvUa
+    void initCheckpointLinks(MapdataCheckPointAccessor *accessor, int id);
+    bool isFinishLine() const { return mpData->checkArea == CheckArea::FinishLine; }
+    bool isNormalCheckpoint() const { return mpData->checkArea == CheckArea::NormalCheckpoint; }
+    const s8 type() const { return mpData->checkArea; }
+    void linkPrevKcpIds(u8 prevKcpId);
+    void setPrevKcpId(s8 prevKcpId);
+
+    bool checkSector(const LinkedCheckpoint &next, const EGG::Vector2f &p0, const EGG::Vector2f &p1) const;
+    bool checkDistanceRatio(const LinkedCheckpoint &next, const EGG::Vector2f &p0, const EGG::Vector2f &p1,
+                            f32 *distanceRatio) const;
+    SectorOccupancy checkSectorAndDistanceRatio_(const LinkedCheckpoint &next, const EGG::Vector2f &p0,
+                                                 const EGG::Vector2f &p1, f32 *distanceRatio) const;
+    SData *mpData;
+    u16 mNextCount;
+    u16 mPrevCount;
+    EGG::Vector2f mMidpoint;
+    EGG::Vector2f mDir;
+    u16 mFlags;
+    u16 mId;
+    s8 mPrevKcpId;
+    u8 _1d[0x20 - 0x1d];
+    MapdataCheckPoint *mpPrevPoints[6];
+    LinkedCheckpoint mNextPoints[6];
 };
 static_assert(sizeof(MapdataCheckPoint) == 0xc8);
 
@@ -483,17 +508,28 @@ public:
   }
 };
 
-class MapdataCheckPathAccessor
-    : public MapdataAccessorBase<MapdataCheckPath, MapdataCheckPath::SData> {
+class MapdataCheckPathAccessor : public MapdataAccessorBase<MapdataCheckPath, MapdataCheckPath::SData> {
+public:
+    MapdataCheckPathAccessor(const KmpSectionHeader *header);
+    // ~MapdataCheckPathAccessor() override;
+    f32 lapProportion() { return mLapProportion; }
+    MapdataCheckPath *findCheckpathForCheckpoint(u16 checkpointId);
+
 private:
-  f32 _0c;
+    void loadPaths();
+    f32 mLapProportion; ///< min proportion of a lap a checkpath can be; calculated as 1/(1+maxDepth)
 };
 static_assert(sizeof(MapdataCheckPathAccessor) == 0x10);
 
-class MapdataCheckPointAccessor
-    : public MapdataAccessorBase<MapdataCheckPoint, MapdataCheckPoint::SData> {
-private:
-  u8 _0c[0x14 - 0x0c];
+class MapdataCheckPointAccessor : public MapdataAccessorBase<MapdataCheckPoint, MapdataCheckPoint::SData> {
+public:
+    void findFinishAndLastKcp();
+    f32 calculateMeanTotalDistanceRecursive(u16 ckptId);
+    f32 calculateMeanTotalDistance();
+    void init();
+    s8 m_lastKcpType;
+    u16 m_finishLineCheckpointId;
+    f32 m_meanTotalDistance;
 };
 static_assert(sizeof(MapdataCheckPointAccessor) == 0x14);
 
@@ -648,7 +684,9 @@ public:
   static inline CourseMap* instance() { return spInstance; }
   static void* loadFile(s32 archiveIdx, const char* filename);
 
-  inline u32 getVersion() const { return mpCourse->getVersion(); }
+    void clearCheckpointFlags();
+
+    inline u32 getVersion() const { return mpCourse->getVersion(); }
 
   MapdataAreaBase* getArea(u16 i) const;
   MapdataAreaBase* getAreaByPriority(u16 i) const;
@@ -676,21 +714,25 @@ public:
   u16 getJugemPointCount() const;
   u16 getStartPointCount() const;
 
-  /*template <typename T, typename TAccessor>
-  TAccessor* parse(u32 sectionName);*/
-  MapdataAreaAccessor* parseAreas(u32 sectionName);
-  MapdataCameraAccessor* parseCameras(u32 sectionName);
-  MapdataCannonPointAccessor* parseCannonPoints(u32 sectionName);
-  MapdataEnemyPathAccessor* parseEnemyPaths(u32 sectionName);
-  MapdataEnemyPointAccessor* parseEnemyPoints(u32 sectionName);
-  MapdataGeoObjAccessor* parseGeoObjs(u32 sectionName);
-  MapdataItemPathAccessor* parseItemPaths(u32 sectionName);
-  MapdataItemPointAccessor* parseItemPoints(u32 sectionName);
-  MapdataJugemPointAccessor* parseJugemPoints(u32 sectionName);
-  MapdataStartPointAccessor* parseKartpoints(u32 sectionName);
-  MapdataMissionPointAccessor* parseMissionPoints(u32 sectionName);
-  MapdataPointInfoAccessor* parsePointInfo(u32 sectionName);
-  MapdataStageAccessor* parseStage(u32 sectionName);
+    /*template <typename T, typename TAccessor>
+    TAccessor* parse(u32 sectionName);*/
+    MapdataAreaAccessor *parseAreas(u32 sectionName);
+    MapdataCameraAccessor *parseCameras(u32 sectionName);
+    MapdataCannonPointAccessor *parseCannonPoints(u32 sectionName);
+    MapdataEnemyPathAccessor *parseEnemyPaths(u32 sectionName);
+    MapdataEnemyPointAccessor *parseEnemyPoints(u32 sectionName);
+    MapdataGeoObjAccessor *parseGeoObjs(u32 sectionName);
+    MapdataItemPathAccessor *parseItemPaths(u32 sectionName);
+    MapdataItemPointAccessor *parseItemPoints(u32 sectionName);
+    MapdataJugemPointAccessor *parseJugemPoints(u32 sectionName);
+    MapdataCheckPathAccessor *parseCheckPath(u32 sectionName);
+    MapdataStartPointAccessor *parseKartpoints(u32 sectionName);
+    MapdataMissionPointAccessor *parseMissionPoints(u32 sectionName);
+    MapdataPointInfoAccessor *parsePointInfo(u32 sectionName);
+    MapdataStageAccessor *parseStage(u32 sectionName);
+
+    s8 lastKcpType() const;
+    MapdataCheckPathAccessor *checkPath() { return mpCheckPath; }
 
 private:
   CourseMap();
