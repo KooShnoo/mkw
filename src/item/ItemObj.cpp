@@ -10,63 +10,63 @@ namespace Item {
 // 0x8079d804 - 0x8079d848
 void ItemObj::loadResources() {
     // TODO: Could be inlined loadResModelByName
-    this->initRenderer(0, "wii_controller", 0, 0, 0, 0, 0, 0);
+    initRenderer(0, "wii_controller", 0, 0, 0, 0, 0, 0);
 }
 
 // 0x8079d8bc - 0x8079d91c
 ItemObj::ItemObj() {
-    this->updateRes = 0;
-    this->flags = NONE;
-    this->flags2 = 0;
-    this->curCollisionFlag = 0;
-    this->colInfo.bboxLow.x = 0;
-    this->colInfo.bboxLow.y = 0;
-    this->colInfo.bboxLow.z = 0;
-    this->colInfo.bboxHigh.x = 0;
-    this->colInfo.bboxHigh.y = 0;
-    this->colInfo.bboxHigh.z = 0;
-    this->colInfo.drivableColInfo = NULL;
-    this->landCollisionFlag = NONE;
-    this->shadowModel = NULL;
-    this->mainModel = NULL;
-    this->lightModel = NULL;
-    this->netIdentifier = -1;
+    mUpdateRes = 0;
+    mFlags = NONE;
+    mFlags2 = 0;
+    mCurCollisionFlag = 0;
+    mColInfo.bboxLow.x = 0;
+    mColInfo.bboxLow.y = 0;
+    mColInfo.bboxLow.z = 0;
+    mColInfo.bboxHigh.x = 0;
+    mColInfo.bboxHigh.y = 0;
+    mColInfo.bboxHigh.z = 0;
+    mColInfo.drivableColInfo = NULL;
+    mLandCollisionFlag = NONE;
+    mShadowModel = NULL;
+    mMainModel = NULL;
+    mLightModel = NULL;
+    mNetIdentifier = -1;
 }
 
 extern "C" void fn_1_27799C(void* p);
 
 // 0x8079d920 - 0x8079d9f8
 void ItemObj::modelSetVisible(bool visible, bool disable) {
-    if (this->mainModel) {
-        this->mainModel->setEnabled(visible);
+    if (mMainModel) {
+        mMainModel->setEnabled(visible);
     }
-    if (this->shadowModel) {
-        this->shadowModel->setEnabled(visible);
+    if (mShadowModel) {
+        mShadowModel->setEnabled(visible);
     }
-    if (this->lightModel) {
-        bool lightEnabled = this->flags & LIGHT_RING_ENABLED;
-        this->lightModel->setEnabled(!lightEnabled);
+    if (mLightModel) {
+        bool lightEnabled = mFlags & LIGHT_RING_ENABLED;
+        mLightModel->setEnabled(!lightEnabled);
     }
     if (visible) {
-        fn_1_27799C(this->renderer);
+        fn_1_27799C(mRenderer);
     } else if (disable) {
-        this->renderer->drawFlags.uint |= 0x21212121;
+        mRenderer->drawFlags.uint |= 0x21212121;
     }
 }
 
 // 0x8079d9fc - 0x8079da98
 void ItemObj::modelEnable() {
-    if (this->mainModel) {
-        this->mainModel->setEnabled(true);
+    if (mMainModel) {
+        mMainModel->setEnabled(true);
     }
-    if (this->shadowModel) {
-        this->shadowModel->setEnabled(true);
+    if (mShadowModel) {
+        mShadowModel->setEnabled(true);
     }
-    if (this->lightModel) {
-        bool lightEnabled = this->flags & LIGHT_RING_ENABLED;
-        this->lightModel->setEnabled(!lightEnabled);
+    if (mLightModel) {
+        bool lightEnabled = mFlags & LIGHT_RING_ENABLED;
+        mLightModel->setEnabled(!lightEnabled);
     }
-    fn_1_27799C(this->renderer);
+    fn_1_27799C(mRenderer);
 }
 
 void fn_1_5527C();
@@ -77,16 +77,16 @@ extern "C" char nw4rException;
 
 // 0x8079da9c - 0x8079dc40
 void ItemObj::onActivate() {
-    bool special = this->itemId == ITEMOBJ_BANANA && isDKJP;
+    bool special = mItemId == ITEMOBJ_BANANA && isDKJP;
     if (special) {
-        this->lightSet = NULL;
-        if (this->mainModel) {
-            this->mainModel->setLightSetIdx(6);
+        mLightSet = NULL;
+        if (mMainModel) {
+            mMainModel->setLightSetIdx(6);
         }
         return;
     } 
     
-    ItemType item = this->itemId;
+    ItemType item = mItemId;
     if (ItemData::table[item].useLight) {
         GFX::LightManagerHolder *lightManagerHolder = GFX::gfxManager[0]->lightManagerHolder;
         s16 errorCode = -12;
@@ -96,30 +96,30 @@ void ItemObj::onActivate() {
         s32 listLen = lightManagerHolder->inactiveLights.count;
         if (listLen > 0) {
             GFX::LightSet *lightSet = GFX::GFXManager::acquireLightSet();
-            this->setLightSet(lightSet);
-            bool isDrop = this->flags & FROM_DROP;
+            setLightSet(lightSet);
+            bool isDrop = mFlags & FROM_DROP;
             if (!isDrop & ~FROM_DROP) {
                 ItemDirector *director = ItemDirector::spInstance;
-                Kart::KartObjectProxy *kart = &director->playerList[this->ownerId];
+                Kart::KartObjectProxy *kart = &director->playerList[mOwnerId];
                 GFX::LightSet *res = (GFX::LightSet*)kart->kartAccessor_48();
-                this->lightSet->copyFrom(res);
+                mLightSet->copyFrom(res);
             } else {
-                this->lightSet->init(0, true);
+                mLightSet->init(0, true);
             } 
         } else {
-            this->lightSet = nullptr;
-            if (this->mainModel) {
+            mLightSet = nullptr;
+            if (mMainModel) {
                 u8 lightSetIdx;
-                bool isDrop = this->flags & FROM_DROP;
+                bool isDrop = mFlags & FROM_DROP;
                 if (!isDrop & ~FROM_DROP) {
                     ItemDirector *director = ItemDirector::spInstance;
-                    Kart::KartObjectProxy *kart = &director->playerList[this->ownerId];
+                    Kart::KartObjectProxy *kart = &director->playerList[mOwnerId];
                     GFX::LightSet *res = (GFX::LightSet*)kart->kartAccessor_48();
                     lightSetIdx = res->index;
                 } else {
                     lightSetIdx = 0;
                 }
-                this->mainModel->setLightSetIdx(lightSetIdx);
+                mMainModel->setLightSetIdx(lightSetIdx);
             }
         }
     }
@@ -127,24 +127,24 @@ void ItemObj::onActivate() {
 
 // 0x8079dc44 - 0x8079dc5c
 void ItemObj::setLightSet(GFX::LightSet *lightSet) {
-    this->lightSet = lightSet;
-    if (!this->mainModel) {
+    mLightSet = lightSet;
+    if (!mMainModel) {
         return;
     }
-    this->mainModel->setLightSet(lightSet);
+    mMainModel->setLightSet(lightSet);
 }
 
 // 0x8079dc60 - 0x8079dcb0
 void ItemObj::setLightSetIdx(u8 lightSetIdx) {
-    bool special = this->itemId == ITEMOBJ_BANANA && isDKJP;
+    bool special = mItemId == ITEMOBJ_BANANA && isDKJP;
     if (special) {
       return;
     }
 
-    if (this->lightSet) {
-      this->lightSet->index = lightSetIdx;
-    } else if (this->mainModel) {
-      this->mainModel->setLightSetIdx(lightSetIdx);
+    if (mLightSet) {
+      mLightSet->index = lightSetIdx;
+    } else if (mMainModel) {
+      mMainModel->setLightSetIdx(lightSetIdx);
     }
 }
 
@@ -155,19 +155,19 @@ bool ItemObj::onUse() {
 
 // 0x8079dcbc - 0x8079dd68
 ItemHitResult ItemObj::onHit() {
-  if (this->mainModel) {
-      this->mainModel->setEnabled(false);
+  if (mMainModel) {
+      mMainModel->setEnabled(false);
   }
-  if (this->shadowModel) {
-      this->shadowModel->setEnabled(false);
+  if (mShadowModel) {
+      mShadowModel->setEnabled(false);
   }
-  if (this->lightModel) {
-      bool lightEnabled = this->flags & LIGHT_RING_ENABLED;
-      this->lightModel->setEnabled(!lightEnabled);
+  if (mLightModel) {
+      bool lightEnabled = mFlags & LIGHT_RING_ENABLED;
+      mLightModel->setEnabled(!lightEnabled);
   }
 
-  u32 drawFlags = this->renderer->drawFlags.uint;
-  this->renderer->drawFlags.uint = drawFlags | 0x21212121;
+  u32 drawFlags = mRenderer->drawFlags.uint;
+  mRenderer->drawFlags.uint = drawFlags | 0x21212121;
 
   return HIT_BREAK;
 }
@@ -179,23 +179,23 @@ void ItemObj::onDrop() {
 
 // 0x8079dd70 - 0x8079de30
 void ItemObj::onDespawn() {
-  if (this->mainModel) {
-      this->mainModel->setEnabled(false);
+  if (mMainModel) {
+      mMainModel->setEnabled(false);
   }
-  if (this->shadowModel) {
-      this->shadowModel->setEnabled(false);
+  if (mShadowModel) {
+      mShadowModel->setEnabled(false);
   }
-  if (this->lightModel) {
-      bool lightEnabled = this->flags & LIGHT_RING_ENABLED;
-      this->lightModel->setEnabled(!lightEnabled);
+  if (mLightModel) {
+      bool lightEnabled = mFlags & LIGHT_RING_ENABLED;
+      mLightModel->setEnabled(!lightEnabled);
   }
 
-  u32 drawFlags = this->renderer->drawFlags.uint;
-  this->renderer->drawFlags.uint = drawFlags | 0x21212121;
+  u32 drawFlags = mRenderer->drawFlags.uint;
+  mRenderer->drawFlags.uint = drawFlags | 0x21212121;
 
-  if (this->lightSet) {
-    GFX::GFXManager::releaseLightSet(this->lightSet);
-    this->lightSet = NULL;
+  if (mLightSet) {
+    GFX::GFXManager::releaseLightSet(mLightSet);
+    mLightSet = NULL;
   }
 }
 
@@ -223,65 +223,65 @@ extern "C" BoxColUnit *  EntityHolder_insertItemObj(BoxColManager * manager, EGG
 void ItemObj::onOnlineShot() {
     1.0f;
     f32 scaleMax = 0.8f;
-    f32 hitboxScale = ItemData::table[this->itemId].hitboxScale;
+    f32 hitboxScale = ItemData::table[mItemId].hitboxScale;
     // if (scaleMax > hitboxScale) {
     //     scaleMax = hitboxScale;
     // }
-    // this->scaleFactor = scaleMax;
-    this->scaleFactor = min(scaleMax, ItemData::table[this->itemId].hitboxScale);
-    this->fixScale();
+    // mScaleFactor = scaleMax;
+    mScaleFactor = min(scaleMax, ItemData::table[mItemId].hitboxScale);
+    fixScale();
 
-    this->lastYRotation.x = 0.0f;
-    this->lastYRotation.y = 1.0f;
-    this->lastYRotation.z = 0.0f;
+    mLastYRotation.x = 0.0f;
+    mLastYRotation.y = 1.0f;
+    mLastYRotation.z = 0.0f;
 
-    resetCollisionEntries(this->curCollisionFlag);
-    this->colInfo.bboxLow.setZero();
-    this->colInfo.bboxHigh.setZero();
-    this->colInfo.movingFloorDist = -FLT_MIN;
-    this->colInfo.wallDist = -FLT_MIN;
-    this->colInfo.floorDist = -FLT_MIN;
-    this->colInfo.colPerpendicularity = 0.0f;
-    this->landCollisionFlag = 0;
+    resetCollisionEntries(mCurCollisionFlag);
+    mColInfo.bboxLow.setZero();
+    mColInfo.bboxHigh.setZero();
+    mColInfo.movingFloorDist = -FLT_MIN;
+    mColInfo.wallDist = -FLT_MIN;
+    mColInfo.floorDist = -FLT_MIN;
+    mColInfo.colPerpendicularity = 0.0f;
+    mLandCollisionFlag = 0;
 
-    Kart::KartObjectProxy * player = PlayerHolder_getPlayer(PlayerHolder, this->ownerId);
+    Kart::KartObjectProxy * player = PlayerHolder_getPlayer(PlayerHolder, mOwnerId);
     EGG::Vector3f bodyForward;
     player->getBodyForward(bodyForward);
-    this->transform.z = bodyForward;
+    mTransform.z = bodyForward;
 
-    this->transform.y.setUp();
+    mTransform.y.setUp();
 
-    if ((1 << this->itemId & 0b00100011) == 0) {
-        this->transform.mirrorZ();
+    if ((1 << mItemId & 0b00100011) == 0) {
+        mTransform.mirrorZ();
     }
-    this->transform.normaliseY();
+    mTransform.normaliseY();
 
-    QuatFromRowVec34(&this->quaternion, &this->transform);
-    this->targetYScale = 0;
-    if (this->drivableColInfo) {
-        FUN_807bd7b4(this->drivableColInfo);
-    }
-
-    this->someCounter = 5;
-    this->vanishCountdown = 0;
-
-    this->activeTime = FUN_807d2ddc((this->flags >> 0x19) & 1) - 1;
-
-    UpdateFunc trailUpdateFunc = ItemData::table[this->itemId].trailingObjUpdateFunc;
-    if ((this->flags & (BROKEN | VANISHED)) == 0) {
-        this->updateFunc = trailUpdateFunc;
+    QuatFromRowVec34(&mQuaternion, &mTransform);
+    mTargetYScale = 0;
+    if (mDrivableColInfo) {
+        FUN_807bd7b4(mDrivableColInfo);
     }
 
-    if (((this->flags & (LOCAL_BROKEN|LOCAL_VANISHED|LOCAL_DESPAWNED)) == 0) && 
-        !ItemData::table[this->itemId].disableBoxCol && 
-        this->boxColEntity == NULL
+    mSomeCounter = 5;
+    mVanishCountdown = 0;
+
+    mActiveTime = FUN_807d2ddc((mFlags >> 0x19) & 1) - 1;
+
+    UpdateFunc trailUpdateFunc = ItemData::table[mItemId].trailingObjUpdateFunc;
+    if ((mFlags & (BROKEN | VANISHED)) == 0) {
+        mUpdateFunc = trailUpdateFunc;
+    }
+
+    if (((mFlags & (LOCAL_BROKEN|LOCAL_VANISHED|LOCAL_DESPAWNED)) == 0) && 
+        !ItemData::table[mItemId].disableBoxCol && 
+        mBoxColEntity == NULL
     ) {
         // BoxColUnit * unit = BoxColManager::spInstance.
         BoxColManager * manager = BoxColManager::spInstance;
-        f32 hitboxSize = ItemData::table[this->itemId].hitboxSize;
-        f32 hitboxScale = ItemData::table[this->itemId].hitboxScale;
-        this->boxColEntity = EntityHolder_insertItemObj(manager, &this->transform.t, true, this, hitboxScale * hitboxSize, 100);
-        this->flags2 |= 0x1000;
+        f32 hitboxSize = ItemData::table[mItemId].hitboxSize;
+        f32 hitboxScale = ItemData::table[mItemId].hitboxScale;
+        mBoxColEntity = EntityHolder_insertItemObj(manager, &mTransform.t, true, this, hitboxScale * hitboxSize, 100);
+        mFlags2 |= 0x1000;
     }
 }
 
@@ -291,76 +291,76 @@ void ItemObj::onOnlineDrop() {
 
 // 0x8079e224 - 0x8079e2fc
 void ItemObj::init(u16 id, u16 typeIndex, eItemType itemType) {
-    this->itemId = itemType;
-    this->id = id;
-    this->typeIndex = typeIndex;
-    this->loadResources();
-    this->updateRes = 0;
-    this->flags = NONE;
-    this->flags2 = 0;
+    mItemId = itemType;
+    mId = id;
+    mTypeIndex = typeIndex;
+    loadResources();
+    mUpdateRes = 0;
+    mFlags = NONE;
+    mFlags2 = 0;
 
-    this->soundActor = new Sound::ItemSnd();
-    this->soundActor->_vf0x118(this, this->itemId);
+    mSoundActor = new Sound::ItemSnd();
+    mSoundActor->_vf0x118(this, mItemId);
 
-    if (ItemData::table[this->itemId].canLand || 
+    if (ItemData::table[mItemId].canLand || 
         itemType == ITEMOBJ_BANANA || 
         itemType == ITEMOBJ_FAKE_ITEM_BOX || 
         itemType == ITEMOBJ_BOMB
     ) {
-        this->colInfo.createDrivableColInfo();
+        mColInfo.createDrivableColInfo();
     }
-    this->drivableColInfo = this->colInfo.drivableColInfo;
+    mDrivableColInfo = mColInfo.drivableColInfo;
 }
 
 // 0x8079ec98 - 0x8079ed18
 void ItemObj::scaleHitbox(bool useRadius) {
     f32 scale;
     if (useRadius) {
-        u32 itemId = this->itemId;
-        scale = ItemData::table[this->itemId].hitboxRadius;
+        u32 itemId = mItemId;
+        scale = ItemData::table[mItemId].hitboxRadius;
     } else {
-        u32 itemId = this->itemId;
-        scale = ItemData::table[this->itemId].hitboxSize;
+        u32 itemId = mItemId;
+        scale = ItemData::table[mItemId].hitboxSize;
     }
-    f32 height = ItemData::table[this->itemId].hitboxHeight;
+    f32 height = ItemData::table[mItemId].hitboxHeight;
     
-    this->hitboxHeight = this->scale.y * height;
-    this->hitboxRadius = this->scale.z * scale;
+    mHitboxHeight = mScale.y * height;
+    mHitboxRadius = mScale.z * scale;
     
-    f32 drawDistBack = ItemData::table[*(volatile int*)&this->itemId].drawDistBack;
-    this->renderer->drawDistanceBack = this->hitboxRadius * drawDistBack;
+    f32 drawDistBack = ItemData::table[*(volatile int*)&mItemId].drawDistBack;
+    mRenderer->drawDistanceBack = mHitboxRadius * drawDistBack;
 }
 
 // 0x8079ed4c - 0x8079edb0
 void ItemObj::fixScale() {
-    this->updateRes |= 0x40;
-    this->scale.set(this->scaleFactor);
+    mUpdateRes |= 0x40;
+    mScale.set(mScaleFactor);
     
-    u32 itemId = this->itemId;
-    f32 scale = ItemData::table[this->itemId].hitboxSize;
-    f32 height = ItemData::table[this->itemId].hitboxHeight;
+    u32 itemId = mItemId;
+    f32 scale = ItemData::table[mItemId].hitboxSize;
+    f32 height = ItemData::table[mItemId].hitboxHeight;
     
-    this->hitboxHeight = this->scale.y * height;
-    this->hitboxRadius = this->scale.z * scale;
+    mHitboxHeight = mScale.y * height;
+    mHitboxRadius = mScale.z * scale;
     
-    f32 drawDistBack = ItemData::table[*(volatile int*)&this->itemId].drawDistBack;
-    this->renderer->drawDistanceBack = this->hitboxRadius * drawDistBack;
+    f32 drawDistBack = ItemData::table[*(volatile int*)&mItemId].drawDistBack;
+    mRenderer->drawDistanceBack = mHitboxRadius * drawDistBack;
 }
 
 // 0x8079edb4 - 0x8079ee2c
 void ItemObj::setScale(EGG::Vector3f * scale) {
-    VECMultiply(&this->scale, scale, this->scaleFactor);
-    this->updateRes = this->updateRes | 0x40;
+    VECMultiply(&mScale, scale, mScaleFactor);
+    mUpdateRes = mUpdateRes | 0x40;
     f32 hitboxScale;
-    u32 itemId = this->itemId;
-    hitboxScale = ItemData::table[this->itemId].hitboxRadius;
-    f32 height = ItemData::table[this->itemId].hitboxHeight;
+    u32 itemId = mItemId;
+    hitboxScale = ItemData::table[mItemId].hitboxRadius;
+    f32 height = ItemData::table[mItemId].hitboxHeight;
     
-    this->hitboxHeight = this->scale.y * height;
-    this->hitboxRadius = this->scale.z * hitboxScale;
+    mHitboxHeight = mScale.y * height;
+    mHitboxRadius = mScale.z * hitboxScale;
     
-    f32 drawDistBack = ItemData::table[*(volatile int*)&this->itemId].drawDistBack;
-    this->renderer->drawDistanceBack = this->hitboxRadius * drawDistBack;
+    f32 drawDistBack = ItemData::table[*(volatile int*)&mItemId].drawDistBack;
+    mRenderer->drawDistanceBack = mHitboxRadius * drawDistBack;
 }
 
 //-------------------------------
