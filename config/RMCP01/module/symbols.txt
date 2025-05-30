@@ -30,7 +30,7 @@ computeExactFinishingTime__Q26System17MapdataCheckPointFRCQ23EGG8Vector2fRCQ23EG
 VEC2_sub = .text:0x00001C68; // type:function size:0x24 scope:global align:4
 VEC2_add = .text:0x00001C8C; // type:function size:0x24 scope:global align:4
 calculateMeanTotalDistanceRecursive__Q26System25MapdataCheckPointAccessorFUs = .text:0x00001CB0; // type:function size:0x30C
-CheckpointHolder_computeMeanTotalDistance = .text:0x00001FBC; // type:function size:0x324 scope:global align:4
+calculateMeanTotalDistance__Q26System25MapdataCheckPointAccessorFv = .text:0x00001FBC; // type:function size:0x324 scope:global align:4
 createInstance__Q26System9CourseMapFv = .text:0x000022E0; // type:function size:0x88 scope:global align:4
 destroyInstance__Q26System9CourseMapFv = .text:0x00002368; // type:function size:0x50 scope:global align:4
 __ct__Q26System9CourseMapFv = .text:0x000023B8; // type:function size:0x40 scope:global align:4
