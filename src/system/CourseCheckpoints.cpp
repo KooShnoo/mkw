@@ -92,7 +92,7 @@ s16 CourseMap::searchNextCheckpoint(s32 playerIdx, const EGG::Vector3f &pos, s16
             // call recursive function to continue the search forwards
             id = findRecursiveSector(playerIdx, pos, depth_, 0, *checkpoint_, completion, params);
             if (id != -1)
-            // stop if player's checkpoint has been found
+                // stop if player's checkpoint has been found
                 break;
         }
     }
@@ -105,14 +105,19 @@ s16 CourseMap::searchNextCheckpoint(s32 playerIdx, const EGG::Vector3f &pos, s16
  */
 s16 CourseMap::searchPrevCheckpoint(s32 playerIdx, const EGG::Vector3f &pos, s16 depth, const MapdataCheckPoint &checkpoint, float *completion, u32 params, const bool param_8) const {
     s16 id = -1;
-    s16 depth_ = depth >= 0 ? depth + 1 : -1;                                                                     // increment depth counter unless it's -1
+    // increment depth counter unless it's -1
+    s16 depth_ = depth >= 0 ? depth + 1 : -1;
 
-    for (u16 i = 0; i < checkpoint.prevCount(); i++) {                                                            // iterate through each previous checkpoint
+    // iterate through each previous checkpoint
+    for (u16 i = 0; i < checkpoint.prevCount(); i++) {
         MapdataCheckPoint *checkpoint_ = (s32)i < checkpoint.prevCount() ? checkpoint.prevPoint(i) : nullptr;
-        if (!param_8 || !checkpoint_->isPlayerFlagged(playerIdx)) {                                               // if checkpoint hasn't been searched yet OR param_8 is false
-            id = findRecursiveSector(playerIdx, pos, depth_, 1, *checkpoint_, completion, params);                // call recursive function to continue the search backwards
+        // if checkpoint hasn't been searched yet OR param_8 is false
+        if (!param_8 || !checkpoint_->isPlayerFlagged(playerIdx)) {
+            // call recursive function to continue the search backwards
+            id = findRecursiveSector(playerIdx, pos, depth_, 1, *checkpoint_, completion, params);
             if (id != -1)
-                break;                                                                                            // stop if player's checkpoint has been found
+                // stop if player's checkpoint has been found
+                break;
         }
     }
     return id;
@@ -469,6 +474,10 @@ f32 MapdataCheckPointAccessor::calculateMeanTotalDistanceRecursive(u16 ckptId) {
     }
 
     return sumDist / n;
+}
+
+f32 MapdataCheckPointAccessor::calculateMeanTotalDistance() {
+    return calculateMeanTotalDistanceRecursive(m_finishLineCheckpointId);
 }
 
 } // namespace System
