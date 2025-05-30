@@ -51,6 +51,7 @@ public:
   f32 baseSpeed() const { return mBaseSpeed; }
   f32 speed() const { return mSpeed; }
   const EGG::Vector3f& dir() const { return mDir; }
+  const EGG::Vector3f &vel1Dir() const { return mVel1Dir; }
   f32 speedRatioCapped() const { return mSpeedRatioCapped; }
   f32 speedRatio() const { return mSpeedRatio; }
   s32 hopStickX() const { return mHopStickX; }
@@ -76,7 +77,14 @@ private:
   f32 mSpeed;
   u8 _024[0x5c - 0x24];
   EGG::Vector3f mDir;
-  u8 _068[0x0b0 - 0x68];
+  EGG::Vector3f mLastDir;
+  EGG::Vector3f mVel1Dir;
+  EGG::Vector3f _80;
+  EGG::Vector3f mDirDiff;
+  bool mHasLandingDir;
+  f32 mOutsideDriftAngle;
+  f32 mLandingAngle;
+  EGG::Vector3f mOutsideDriftLastDir;
   f32 mSpeedRatioCapped;
   f32 mSpeedRatio;
   u8 _0b8[0x0cc - 0x0b8];
@@ -100,8 +108,8 @@ private:
   // TODO
   u16 mFlags;
   u8 _256[0x258 - 0x256];
-  KartJump* mJump;
-  KartHalfPipe* mHalfPipe;
+  KartJump *mJump;
+  KartHalfPipe *mHalfPipe;
   u8 _260[0x294 - 0x260];
 };
 static_assert(sizeof(KartMove) == 0x294);

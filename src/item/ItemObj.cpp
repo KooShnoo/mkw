@@ -3,7 +3,12 @@
 #include "ItemObj.hpp"
 #include "BaseItemData.hpp"
 #include "ItemDirector.hpp"
+#include "egg/math/eggVector.hpp"
 #include "gfx/GFXManager.hpp"
+#include "kart/KartMove.hpp"
+#include "kart/KartObject.hpp"
+#include "kart/KartObjectManager.hpp"
+#include "kart/KartObjectProxy.hpp"
 
 namespace Item {
 
@@ -221,7 +226,7 @@ extern "C" BoxColUnit *  EntityHolder_insertItemObj(BoxColManager * manager, EGG
 
 // 0x8079dee4 - 0x8079e1ec
 void ItemObj::onOnlineShot() {
-    1.0f;
+    (void) 1.0f;
     f32 scaleMax = 0.8f;
     f32 hitboxScale = ItemData::table[mItemId].hitboxScale;
     // if (scaleMax > hitboxScale) {
@@ -370,4 +375,113 @@ void ItemObj::setScale(EGG::Vector3f * scale) {
 // void ItemObj::initDefaultRenderer() {
 // }
 
+
+// TODO: migrate to egg TBitFlag or rkbitfield or another thing
+#define ON_BIT(bitfield, mask) ((bitfield & mask) == 0)
+
+
+void ItemObj::Spawn(ItemType objId, u8 playerId, const EGG::Vector3f &position, bool r7) {
+    mTransform.t = position;
+    mOwnerId = playerId;
+    mTrailOwnerId = MAX_PLAYER_COUNT;
+    SetId(objId);
+    draw_8079e38c();
+    if (!ON_BIT(mFlags, 0x1000000)) {
+        drawTransform_807a07b8(0);
+    } else {
+        drawTransform_807a0cd4(0, 0.0f);
+    }
+    mNetIdentifier = spawnItemSomething_8079acc0(r7);
 }
+
+// forard decls
+void NormalizeVector(EGG::Vector3f &out, const EGG::Vector3f &src);
+void MultiplyVectorByDotProduct_LLMname(const EGG::Vector3f &lhs, const EGG::Vector3f &rhs, EGG::Vector3f &out);
+void Eff_greenShel_FUN_8068d4f8(f64, void *, const EGG::Vector3f &effectPos);
+void Eff_redShel_FUN_8068d570(f64, void *, const EGG::Vector3f &effectPos);
+
+struct ObjectCollisionItem {
+public:
+    struct {
+        u32 vt;
+        EGG::Vector3f m_translation;
+        EGG::Vector3f _0c;
+    } base;
+    f32 radius;
+    EGG::Vector3f itemPos;
+
+    static ObjectCollisionItem *spInstance;
+};
+static_assert(sizeof(ObjectCollisionItem) == 0x2c);
+struct EffectInfo {
+    u8 _0[0x74 - 0x00];
+    void *_74;
+    static EffectInfo* spInstance; // = (EffectInfo*)0x809c21d0;
+};
+bool checkPrimitiveCollision(Kart::KartAccessor_34* thisptr, ObjectCollisionItem &prim);
+// fro debugging
+#pragma sym on
+
+// wip
+void ItemObj::checkOnlineTargetPlayerCollision() {
+    Kart::KartObject *kart = Kart::KartObjectManager::sInstance->getObject(mOnlineTarget);
+    f32 boundingRadius = mHitboxRadius + kart->getBoundingRadius();
+    f32 kartDist = PSVECSquareDistance(mTransform.t, kart->pos());
+    bool isCollide = kartDist < boundingRadius * boundingRadius;
+    if (isCollide) {
+        ObjectCollisionItem::spInstance->itemPos = mTransform.t;
+        ObjectCollisionItem::spInstance->radius = mHitboxRadius;
+        // isCollide = kart->objectCollisionKart()->checkPrimitiveCollision(*ObjectCollisionItem::spInstance);
+        isCollide = checkPrimitiveCollision(kart->kartAccessor_34(), *ObjectCollisionItem::spInstance);
+    }
+    if (!isCollide) {
+        const EGG::Vector3f &kartPos = kart->pos();
+        const EGG::Vector3f &kartPosOld = kart->oldPos();
+        f32 distNew = PSVECSquareDistance(kartPos, mTransform.t);
+        f32 distOld = PSVECSquareDistance(kartPosOld, mLastPosition);
+        if (distNew < distOld) {
+            EGG::Vector3f local_38 = kartPos - kartPosOld;
+            // todo: we are missing vector headers, probably
+            EGG::Vector3f local_44 = mTransform.t - mLastPosition;
+            nw4r::math::VEC3Add(&local_38, &kartPos, &local_38);
+            nw4r::math::VEC3Add(&local_44, &mTransform.t, &local_44);
+            f32 dvar6 = PSVECSquareDistance(local_38, local_44);
+            if (dvar6 < distNew) { return; }
+        }
+    }
+
+    // this is bad
+    #define ITEM_OBJ_SHELL (Item::ITEMOBJ_GREEN_SHELL | Item::ITEMOBJ_RED_SHELL | Item::ITEMOBJ_BLUE_SHELL)
+    #define then
+    if (
+        ON_BIT(mItemId, ITEM_OBJ_SHELL)
+        && ON_BIT(mFlags, DROPPED)
+        && ON_BIT(mFlags, GROUNDED)
+        && !isCollide
+        && (!ON_BIT(~mRenderer->drawFlags.uint, 0x1010101))
+    ) then {
+        EGG::Vector3f local_68 = mSpeed;
+        NormalizeVector(local_68, mSpeed);
+        EGG::Vector3f local_5c = mTransform.t - kart->pos();
+        MultiplyVectorByDotProduct_LLMname(local_5c, local_68, local_5c);
+
+        // todo: find PSVecSquaredLength, what is it actually called?
+        // if (local_5c.PSVecSquaredLength() >= square(250.0f)) {
+        if (local_5c.squaredLength() >= 62500.0f) {
+            // local_5c = mTransform.t - local_5c;
+            nw4r::math::VEC3Sub(&local_5c, &mTransform.t, &local_5c);
+
+            if (mItemId == Item::ITEMOBJ_GREEN_SHELL) {
+                Eff_greenShel_FUN_8068d4f8(mScaleFactor, EffectInfo::spInstance->_74, local_5c);
+            }
+            if (mItemId == Item::ITEMOBJ_RED_SHELL) {
+                Eff_redShel_FUN_8068d570(mScaleFactor, EffectInfo::spInstance->_74, local_5c);
+            }
+        }
+    }
+
+    fallGround_807a6738(kart->pos(), kart->speed(), kart->kartMove()->vel1Dir(), true);
+    break_807a6614(false, mOnlineTarget);
+}
+
+} // namespace Item

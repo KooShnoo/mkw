@@ -134,7 +134,12 @@ public:
   const KartHalfPipe* kartHalfPipe();
   const KartJump* kartJump();
 
+  f32 getBoundingRadius();
+  
+  const EGG::Vector3f &speed() const;
   const EGG::Vector3f& getPos() const;
+  const EGG::Vector3f &pos() const;
+  const EGG::Vector3f &oldPos() const;
   void getBodyForward(EGG::Vector3f& out);
   s32 getHopStickX();
   s32 getAppliedHopStickX();
