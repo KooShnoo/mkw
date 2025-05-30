@@ -176,6 +176,15 @@ MapdataGeoObjAccessor* CourseMap::parseGeoObjs(u32 sectionName) {
   return accessor;
 }
 
+MapdataCheckPathAccessor *CourseMap::parseCheckPath(u32 sectionName) {
+    const KmpSectionHeader *sectionPtr = mpCourse->findSection(sectionName);
+
+    MapdataCheckPathAccessor *accessor = 0;
+    if (sectionPtr) { accessor = new MapdataCheckPathAccessor(sectionPtr); }
+
+    return accessor;
+}
+
 MapdataItemPointAccessor* CourseMap::parseItemPoints(u32 sectionName) {
   const KmpSectionHeader* sectionPtr = mpCourse->findSection(sectionName);
 
@@ -337,6 +346,16 @@ MapdataCheckPath *MapdataCheckPathAccessor::findCheckpathForCheckpoint(u16 check
     return 0;
 }
 
+MapdataCheckPathAccessor::MapdataCheckPathAccessor(const KmpSectionHeader *header)
+    : MapdataAccessorBase<MapdataCheckPath, MapdataCheckPath::SData>(header) {
+    init(reinterpret_cast<const MapdataCheckPath::SData *>(sectionHeader + 1), sectionHeader->entryCount);
+    loadPaths();
+}
+
+MapdataCheckPath::MapdataCheckPath(const SData *data) : mpData(data), mDfsDepth(-1), mOneOverCount(1.0f) {
+    mOneOverCount = 1.0f / data->size;
+}
+
 void MapdataCheckPath::findDepth(s8 depth, const MapdataCheckPathAccessor &accessor) {
     if (mDfsDepth != -1) { return; }
 
@@ -357,7 +376,7 @@ void MapdataCheckPointAccessor::init() {
     findFinishAndLastKcp();
     MapdataCheckPoint *finishLine = get(m_finishLineCheckpointId);
     finishLine->linkPrevKcpIds(0);
-    CourseMap::instance()->clearCheckpointFlags();
+    CourseMap::instance()->clearSectorChecked();
     m_meanTotalDistance = calculateMeanTotalDistance();
 }
 

@@ -17,6 +17,39 @@ struct Vector2f {
   float x;
   float y;
 
+  static inline float dot(const Vector2f& v1, const Vector2f& v2) { return v1.x * v2.x + v1.y * v2.y; }
+
+    Vector2f operator+(Vector2f& other) { 
+      Vector2f v = Vector2f(x + other.x, y + other.y);
+      return v;
+    }
+
+    Vector2f operator-(Vector2f& other);// {
+    //     return Vector2f(x - other.x, y - other.y);
+    // }
+
+    Vector2f operator*(const f32 scalar);// {
+    //     return Vector2f(x * scalar, y * scalar);
+    // }
+
+    inline Vector2f& operator =(const Vector2f &other) {
+        x = other.x;
+        y = other.y;
+        return *this;    
+    }
+    inline Vector2f& operator *=(f32 scalar) {
+        x *= scalar;
+        y *= scalar;
+        return *this;
+    }
+
+    inline f32 dot(const Vector2f &other) {
+        return x * other.x + y * other.y;
+    }
+
+    void sub(const Vector2f&, const Vector2f &);
+    void add(const Vector2f&, const Vector2f &);
+
   float normalise();
   // uses fsqrt directly
   void normalise2();

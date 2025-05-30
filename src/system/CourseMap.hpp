@@ -189,8 +189,11 @@ public:
     MapdataCheckPoint *prevPoint(s32 i) const { return mpPrevPoints[i]; }
     inline MapdataCheckPoint *nextPoint(s32 i) const {
         if (i < nextCount()) { return mNextPoints[i].checkpoint; }
-        return 0;
+        return nullptr;
     }
+
+    const u16 computeExactFinishingTime(const EGG::Vector2f &lastPos, const EGG::Vector2f &pos);
+
     friend class MapdataCheckPointAccessor;
     friend class RaceManagerPlayer;
 
@@ -684,9 +687,9 @@ public:
   static inline CourseMap* instance() { return spInstance; }
   static void* loadFile(s32 archiveIdx, const char* filename);
 
-    void clearCheckpointFlags();
+  void clearSectorChecked();
 
-    inline u32 getVersion() const { return mpCourse->getVersion(); }
+  inline u32 getVersion() const { return mpCourse->getVersion(); }
 
   MapdataAreaBase* getArea(u16 i) const;
   MapdataAreaBase* getAreaByPriority(u16 i) const;
@@ -709,6 +712,7 @@ public:
 
   u16 getAreaCount() const;
   u16 getCameraCount() const;
+  u16 getCheckPointCount() const { return mpCheckPoint ? mpCheckPoint->size() : 0; }
   u16 getEnemyPointCount() const;
   u16 getItemPointCount() const;
   u16 getJugemPointCount() const;
@@ -733,6 +737,14 @@ public:
 
     s8 lastKcpType() const;
     MapdataCheckPathAccessor *checkPath() { return mpCheckPath; }
+
+  s16 searchNextCheckpoint(s32 playerIdx, const EGG::Vector3f &pos, s16 depth, const MapdataCheckPoint &checkpoint, float *completion, u32 params, bool param_8) const;
+  s16 searchPrevCheckpoint(s32 playerIdx, const EGG::Vector3f &pos, s16 depth, const MapdataCheckPoint &checkpoint, float *completion, u32 params, bool param_8) const;
+  s16 findNextCheckPointRec(s32 playerIdx, const EGG::Vector2f &pos, s16 depth, int param_5, MapdataCheckPoint &checkpoint, float *completion, u32 params) const;
+  s16 findRecursiveSector(s32 playerIdx, const EGG::Vector3f &pos, s16 depth, int param_5, MapdataCheckPoint &checkpoint, float *completion, u32 params) const;
+  s16 findSector(s32 playerIdx, const EGG::Vector3f& pos, u16 checkpointIdx, f32* distanceRatio, bool isRemote);
+
+  u16 computeExactFinishingTime(u16 checkpointIdx, const EGG::Vector3f &pos, const EGG::Vector3f &lastPos);
 
 private:
   CourseMap();
