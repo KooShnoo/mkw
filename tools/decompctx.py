@@ -57,24 +57,20 @@ def import_c_file(in_file: str) -> str:
 
 def process_file(in_file: str, lines: List[str]) -> str:
     out_text = ""
-    if in_file == "lib\\rvl\\mem\\memAllocator.h":
-        print(lines)
     for idx, line in enumerate(lines):
         if idx == 0:
-            print("Processing file", in_file)
-            
             guard_match = guard_pattern.match(line.strip())
             if guard_match:
                 if guard_match[1] in defines:
                     break
                 defines.add(guard_match[1])
-                
-        once_match = once_pattern.match(line.strip())
-        if once_match:
-            if in_file in defines:
-                break
-            defines.add(in_file)
-                
+            else:
+                once_match = once_pattern.match(line.strip())
+                if once_match:
+                    if in_file in defines:
+                        break
+                    defines.add(in_file)
+            print("Processing file", in_file)
         include_match = include_pattern.match(line.strip())
         if include_match and not include_match[1].endswith(".s"):
             out_text += f'/* "{in_file}" line {idx} "{include_match[1]}" */\n'
@@ -118,7 +114,7 @@ def main():
     args = parser.parse_args()
 
     if args.include is None:
-        args.include = ["lib", "include", "src", "lib\\MSL\\include"]
+        exit("No include directories specified")
     global include_dirs
     include_dirs = args.include
     output = import_c_file(args.c_file)
