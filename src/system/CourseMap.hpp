@@ -188,8 +188,9 @@ public:
     s32 id() const { return mId; }
     MapdataCheckPoint *prevPoint(s32 i) const { return mpPrevPoints[i]; }
     inline MapdataCheckPoint *nextPoint(s32 i) const {
-        if (i < nextCount()) { return mNextPoints[i].checkpoint; }
-        return nullptr;
+         return mNextPoints[i].checkpoint;
+        // if (i < nextCount()) { return mNextPoints[i].checkpoint; }
+        // return nullptr;
     }
 
     const u16 computeExactFinishingTime(const EGG::Vector2f &lastPos, const EGG::Vector2f &pos);
