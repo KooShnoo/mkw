@@ -71,6 +71,10 @@ public:
   u8* ripFromDisc(const char path[64], EGG::Heap* heap, bool allocTop,
                   u32* fsizeOutput, u8* dst);
 
+    static inline SystemManager& ref() { return *sInstance; }
+    f32 getFrameTime() const { return mFrameSize60; }
+    inline f32 getDeltaTime() const { return 1.0f / mFrameSize60; }
+
   //! @brief Processes a rip request (used as function for ripping task thread)
   //!
   //! @details
