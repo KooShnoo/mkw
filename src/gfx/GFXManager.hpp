@@ -4,7 +4,6 @@
 #include <nw4r/ut/utList.hpp>
 
 #include "egg/core/eggDisposer.hpp"
-#include "render/ModelDirector.hpp"
 
 namespace GFX {
     class GFXManager;
