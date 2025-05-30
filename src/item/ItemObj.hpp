@@ -122,7 +122,19 @@ namespace Item {
         // Placeholders:
         void initDefaultRenderer();
         void initRenderer(char *fileName, char *resName, char *shadowResName, int unk1, char **anims, int unk2, void* unk3, int unk4);
-    
+
+        // create
+        void Spawn(ItemType objId, u8 playerId, const EGG::Vector3f &position, bool r7);
+        void SetId(ItemType objId); // 8079e5f4
+        u16 spawnItemSomething_8079acc0(bool);
+        void draw_8079e38c();
+        void drawTransform_807a07b8(u32);
+        void drawTransform_807a0cd4(u32, f32);
+
+        void checkOnlineTargetPlayerCollision();
+        void break_807a6614(bool, u8 collidedPlayerId);
+        void fallGround_807a6738(const EGG::Vector3f &pos, const EGG::Vector3f &vel, const EGG::Vector3f &dir, bool);
+
         typedef void (ItemObj::*UpdateFunc)();
         typedef void (ItemObj::*BounceHitFunc)();
     private:
@@ -157,7 +169,7 @@ namespace Item {
         BoxColUnit * mBoxColEntity;
         float mHitboxHeight;
         float mHitboxRadius;
-        Vec mLastPosition;
+        EGG::Vector3f mLastPosition;
         Vec mLastYRotation;
 
         u32 mCurCollisionFlag;
