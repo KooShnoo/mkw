@@ -126,60 +126,66 @@ namespace Item {
         typedef void (ItemObj::*UpdateFunc)();
         typedef void (ItemObj::*BounceHitFunc)();
     private:
-        ItemType itemId;
-        u16 id; /* Global */
-        u16 typeIndex; /* Id of type */
-        u16 netIdentifier; /* u8[0] = owner, u8[1] = counter */
+        ItemType mItemId;
+        u16 mId; ///< Global
+        u16 mTypeIndex; ///< Id of type
+        u16 mNetIdentifier; ///< u8[0] = owner, u8[1] = counter
         
         //TODO: change to vectors
-        EGG::Quatf quaternion;
-        RowVec34 transform;
-        EGG::Vector3f speed;
-        EGG::Vector3f scale;
-        float scaleFactor;
+        EGG::Quatf mQuaternion;
+        RowVec34 mTransform;
+        EGG::Vector3f mSpeed;
+        EGG::Vector3f mScale;
+        float mScaleFactor;
         
-        u8 ownerId;
-        u8 trailOwnerId;
-        u16 field15_0x6e;
-        u16 field16_0x70;
+        u8 mOwnerId;
+        u8 mTrailOwnerId;
+        u16 mField15_0x6e;
+        u16 mField16_0x70;
         
-        u32 updateRes; /* 0x4 = despawned, 0x8 = made stationary */
-        ItemObjFlags1 flags; 
-        unk32 flags2;
-        float posDraw[3]; /* Used by blue shell while high in the air */
-        float posStart[3]; /* Used during throw if flags2&8 */
-        float * positionPtr; /* Points to h20 mtx */
-        Render::ModelDirector * mainModel;
-        Render::ModelDirector * shadowModel;
-        Render::ObjectRenderer * renderer;
-        Render::ModelDirector * lightModel;
-        GFX::LightSet * lightSet;
-        BoxColUnit * boxColEntity;
-        float hitboxHeight;
-        float hitboxRadius;
-        Vec lastPosition;
-        Vec lastYRotation;
+        u32 mUpdateRes; ///< 0x4 = despawned, 0x8 = made stationary
+        ItemObjFlags1 mFlags; 
+        unk32 mFlags2;
+        EGG::Vector3f mPosDraw; ///< Used by blue shell while high in the air
+        EGG::Vector3f mPosStart; ///< Used during throw if flags2&8
+        float * mPositionPtr; ///< Points to h20 mtx
+        Render::ModelDirector * mMainModel;
+        Render::ModelDirector * mShadowModel;
+        Render::ObjectRenderer * mRenderer;
+        Render::ModelDirector * mLightModel;
+        GFX::LightSet * mLightSet;
+        BoxColUnit * mBoxColEntity;
+        float mHitboxHeight;
+        float mHitboxRadius;
+        Vec mLastPosition;
+        Vec mLastYRotation;
 
-        u32 curCollisionFlag;
-        Field::ColInfo colInfo;
-        Field::DrivableColInfo * drivableColInfo;
-        u32 landCollisionFlag;
-        u8 onlineTarget;
+        u32 mCurCollisionFlag;
+        Field::ColInfo mColInfo;
+        Field::DrivableColInfo * mDrivableColInfo;
+        u32 mLandCollisionFlag;
+        u8 mOnlineTarget;
         
-        float targetYScale;
-        float field43_0x144[3];
-        float someRotationVec[3];
-        short someCounter;
-        short vanishCountdown;
+        float mTargetYScale;
+        EGG::Vector3f mField43_0x144;
+        EGG::Vector3f mSomeRotationVec;
+        short mSomeCounter;
+        short mVanishCountdown;
         
-        u32 activeTime;
-        u32 counter;
+        u32 mActiveTime;
+        u32 mCounter;
 
-        UpdateFunc updateFunc;
-        BounceHitFunc bounceHitFunc;
+        UpdateFunc mUpdateFunc;
+        BounceHitFunc mBounceHitFunc;
 
-        Sound::ItemSnd * soundActor;
-        bool field52_0x184;
-        bool belowDeadPlane;
+        Sound::ItemSnd * mSoundActor;
+        u8 fe;
+        bool mField52_0x184;
+        u8 f;
+        bool mBelowDeadPlane;
     };
+    #ifndef __INTELLISENSE__
+    static_assert(sizeof(ItemObj) == 0x188);
+    #endif
+    
 }
