@@ -4,13 +4,17 @@
 #include "BaseItemData.hpp"
 #include "ItemDirector.hpp"
 #include "egg/math/eggVector.hpp"
+#include "geo/BoxColManager.hpp"
 #include "gfx/GFXManager.hpp"
 #include "kart/KartMove.hpp"
 #include "kart/KartObject.hpp"
 #include "kart/KartObjectManager.hpp"
 #include "kart/KartObjectProxy.hpp"
+#include "rk_types.h"
 
 namespace Item {
+
+const f32 MAX_ITEM_SPEED = 100.0f;
 
 // 0x8079d804 - 0x8079d848
 void ItemObj::loadResources() {
@@ -317,6 +321,12 @@ void ItemObj::init(u16 id, u16 typeIndex, eItemType itemType) {
     mDrivableColInfo = mColInfo.drivableColInfo;
 }
 
+f32 ItemObj::hitboxSize(bool small) {
+    f32 radius = small ? ItemData::table[mItemId].hitboxRadius : ItemData::table[mItemId].hitboxSize;
+    f32 scale = ItemData::table[mItemId].hitboxScale;
+    return scale * radius;
+}
+
 // 0x8079ec98 - 0x8079ed18
 void ItemObj::scaleHitbox(bool useRadius) {
     f32 scale;
@@ -334,6 +344,17 @@ void ItemObj::scaleHitbox(bool useRadius) {
     
     f32 drawDistBack = ItemData::table[*(volatile int*)&mItemId].drawDistBack;
     mRenderer->drawDistanceBack = mHitboxRadius * drawDistBack;
+}
+
+bool ItemObj::raiseScaleFactor(f32 arg1, f32 arg2) {
+    if ((mScaleFactor < arg1)) {
+        mScaleFactor += arg2;
+        if (!(mScaleFactor < arg1)) {
+            mScaleFactor = arg1;
+        }
+        return true;
+    }
+    return false;
 }
 
 // 0x8079ed4c - 0x8079edb0
@@ -367,6 +388,22 @@ void ItemObj::setScale(EGG::Vector3f * scale) {
     f32 drawDistBack = ItemData::table[*(volatile int*)&mItemId].drawDistBack;
     mRenderer->drawDistanceBack = mHitboxRadius * drawDistBack;
 }
+
+void ItemObj::registerBoxCol(bool small) {
+    mBoxColEntity = BoxColManager::spInstance->insertItemObj(
+        /* radius */ hitboxSize(small),
+        // /* maxSpeed */ 100.0f,
+        /* maxSpeed */ MAX_ITEM_SPEED,
+        /* pos */ &mTransform.t,
+        /* meep */ true,
+        /* item */ this
+    );
+}
+
+void ItemObj::deregisterBoxCol() {
+    BoxColManager::spInstance->remove(&mBoxColEntity);
+}
+
 
 //-------------------------------
 //Placeholders:
