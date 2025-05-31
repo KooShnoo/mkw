@@ -30,6 +30,9 @@ ctx.*
 objdiff.json
 compile_commands.json
 
+# Logs from the ghidra symbol porting script
+ghidra_sync_logs/*.txt
+
 # Miscellaneous
 /*.txt
 *.exe
