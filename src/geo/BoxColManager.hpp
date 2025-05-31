@@ -1,11 +1,16 @@
 #pragma once
 
+#include "egg/math/eggVector.hpp"
 #include <geo/BoxColUnit.hpp>
 #include <geo/ObjDrivable.hpp>
 #include <egg/core/eggDisposer.hpp>
 
 extern "C" const float flt_808A47EC;
 // extern const float flt_808A47EC;
+
+namespace Item {
+  class ItemObj;
+}
 
 struct BoxColRightPoint {
   /*
@@ -52,10 +57,16 @@ class BoxColManager : public EGG::Disposer {
 public:
   static BoxColManager* spInstance;
 
-  bool isSphereInSpatialCache(const EGG::Vector3f& pos, float radius, u32 flag) const;
-  void initIterators(const EGG::Vector3f& pos, f32 radius, u32 boxColFlag);
-  void resetIterators();
   GeoObj::ObjDrivable* nextDrivable();
+  void resetIterators();
+  // https://decomp.me/scratch/eidRQ
+  BoxColUnit *remove(BoxColUnit **unit);
+  // https://decomp.me/scratch/k1rHs
+  BoxColUnit *insert(f32 radius, f32 maxSpeed, const EGG::Vector3f *pos, s32 flag, const void *userData);
+  BoxColUnit *insertItemObj(f32 radius,f32 maxSpeed, const EGG::Vector3f *pos, bool meep, const Item::ItemObj *item);
+
+  void initIterators(const EGG::Vector3f& pos, f32 radius, u32 boxColFlag);
+  bool isSphereInSpatialCache(const EGG::Vector3f& pos, float radius, u32 flag) const;
 
 private:
   // right point of each box unit in the pool

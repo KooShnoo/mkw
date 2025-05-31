@@ -116,8 +116,14 @@ namespace Item {
         void init(u16 id, u16 typeIndex, eItemType itemType);
 
         void scaleHitbox(bool useRadius);
+        bool raiseScaleFactor(f32, f32);
         void fixScale();
         void setScale(EGG::Vector3f * scale);
+
+        f32 hitboxSize(bool small);
+
+        void registerBoxCol(bool small);
+        void deregisterBoxCol();
 
         // Placeholders:
         void initDefaultRenderer();

@@ -214,7 +214,7 @@ enemy/AISpeed.cpp:
 	.data       start:0x00018928 end:0x00018A20
 
 geo/BoxColManager.cpp:
-	.text       start:0x00276AAC end:0x00276B1C
+	.text       start:0x00275130 end:0x00276B1C
 
 geo/BoxColUnit.cpp:
 	.text       start:0x00276B1C end:0x00276BE4

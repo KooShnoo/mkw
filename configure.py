@@ -790,7 +790,7 @@ config.libs = [
             Object(Equivalent, "enemy/AI.cpp"),
             Object(Equivalent, "enemy/AITrickHandler.cpp"),
 
-            Object(Matching, "geo/BoxColManager.cpp"),
+            Object(NonMatching, "geo/BoxColManager.cpp"),
             Object(Matching, "geo/BoxColUnit.cpp"),
         ],
     },
