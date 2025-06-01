@@ -4,6 +4,7 @@
 
 #include "BaseItemMath.hpp"
 #include "ItemEventQueue.hpp"
+#include "kart/KartObject.hpp"
 #include "render/ModelDirector.hpp"
 #include "field/CollisionInfo.hpp"
 #include "geo/BoxColManager.hpp"
@@ -140,6 +141,9 @@ namespace Item {
         void checkOnlineTargetPlayerCollision();
         void break_807a6614(bool, u8 collidedPlayerId);
         void fallGround_807a6738(const EGG::Vector3f &pos, const EGG::Vector3f &vel, const EGG::Vector3f &dir, bool);
+        void collideSomething_807a6ec8(bool online);
+
+        void handlePlayerCollision(const Kart::KartObject &kart, bool);
 
         typedef void (ItemObj::*UpdateFunc)();
         typedef void (ItemObj::*BounceHitFunc)();
@@ -202,7 +206,7 @@ namespace Item {
         u8 f;
         bool mBelowDeadPlane;
     };
-    #ifndef __INTELLISENSE__
+    #ifndef __EDITOR_CHECKING__
     static_assert(sizeof(ItemObj) == 0x188);
     #endif
     

@@ -160,6 +160,7 @@ public:
   const EGG::Vector3f& getScale();
   // Tentative name
   bool inRespawn();
+  void rumbleController_80590570() const;
   // Unused, and the KartMove flags are not documented
   bool isSomeMoveFlagActive();
   bool isCpu() const;

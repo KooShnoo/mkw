@@ -64,6 +64,7 @@ public:
   // https://decomp.me/scratch/k1rHs
   BoxColUnit *insert(f32 radius, f32 maxSpeed, const EGG::Vector3f *pos, s32 flag, const void *userData);
   BoxColUnit *insertItemObj(f32 radius,f32 maxSpeed, const EGG::Vector3f *pos, bool meep, const Item::ItemObj *item);
+  // BoxColUnit *insertItemObj(const EGG::Vector3f *pos, bool meep, const Item::ItemObj *item,f32 radius,f32 maxSpeed);
 
   void initIterators(const EGG::Vector3f& pos, f32 radius, u32 boxColFlag);
   bool isSphereInSpatialCache(const EGG::Vector3f& pos, float radius, u32 flag) const;
