@@ -285,11 +285,7 @@ void ItemObj::onOnlineShot() {
         !ItemData::table[mItemId].disableBoxCol && 
         mBoxColEntity == NULL
     ) {
-        // BoxColUnit * unit = BoxColManager::spInstance.
-        BoxColManager * manager = BoxColManager::spInstance;
-        f32 hitboxSize = ItemData::table[mItemId].hitboxSize;
-        f32 hitboxScale = ItemData::table[mItemId].hitboxScale;
-        mBoxColEntity = EntityHolder_insertItemObj(manager, &mTransform.t, true, this, hitboxScale * hitboxSize, 100);
+        registerBoxCol(true);
         mFlags2 |= 0x1000;
     }
 }
@@ -519,6 +515,22 @@ void ItemObj::checkOnlineTargetPlayerCollision() {
 
     fallGround_807a6738(kart->pos(), kart->speed(), kart->kartMove()->vel1Dir(), true);
     break_807a6614(false, mOnlineTarget);
+}
+
+void ItemObj::handlePlayerCollision(const Kart::KartObject &kart, bool online) {
+    const ItemData &data = ItemData::table[mItemId];
+    if (data.hasPlayerCollision && !online) {
+        if (data.hasPlayerEffect) {
+            const EGG::Vector3f &vel1Dir = kart.kartMove()->vel1Dir();
+            const EGG::Vector3f &speed = kart.speed();
+            const EGG::Vector3f &pos = kart.pos();
+            fallGround_807a6738( pos, speed, vel1Dir, true);
+            break_807a6614(true, kart.getPlayerIdx());
+            kart.rumbleController_80590570();
+        } else {
+            collideSomething_807a6ec8(true);
+        }
+    }
 }
 
 } // namespace Item
