@@ -144,6 +144,7 @@ namespace Item {
         void collideSomething_807a6ec8(bool online);
 
         void handlePlayerCollision(const Kart::KartObject &kart, bool);
+        void applyRoadCollision(f32 param_1, const EGG::Vector3f &param_3);
 
         typedef void (ItemObj::*UpdateFunc)();
         typedef void (ItemObj::*BounceHitFunc)();
@@ -162,8 +163,8 @@ namespace Item {
         
         u8 mOwnerId;
         u8 mTrailOwnerId;
-        u16 mField15_0x6e;
-        u16 mField16_0x70;
+        s16 _6E;
+        u16 _70;
         
         u32 mUpdateRes; ///< 0x4 = despawned, 0x8 = made stationary
         ItemObjFlags1 mFlags; 
@@ -180,7 +181,7 @@ namespace Item {
         float mHitboxHeight;
         float mHitboxRadius;
         EGG::Vector3f mLastPosition;
-        Vec mLastYRotation;
+        EGG::Vector3f mLastYRotation;
 
         u32 mCurCollisionFlag;
         Field::ColInfo mColInfo;
