@@ -13,11 +13,25 @@ typedef unsigned char unk8;
 //! Unknown value of unknown size
 typedef unk32 unk;
 
-// Necesary for CW
-#if __cplusplus < 201103L && !defined(_WIN32)
+// C++11 language features
+#if __cplusplus < 201103L && defined(__CWCC__)
 #define override
-#define noexcept
+#define noexcept throw()
 #define nullptr NULL
+#elif defined(__CLANGD__)
+#define override \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Wc++11-extensions\"") \
+  override \
+  _Pragma("clang diagnostic pop")
+
+_Pragma("clang diagnostic push");
+_Pragma("clang diagnostic ignored \"-Wc++11-extensions\"");
+const auto nullptr = __nullptr
+_Pragma("clang diagnostic pop");
+// #else
+// // building with a non-codewarrior compiler is not supported yet
+// #error "rk_types for non codewarrior compiler unsupported"
 #endif
 
 #define ensures(cond)
