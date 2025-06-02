@@ -4,12 +4,16 @@
 #include "BaseItemData.hpp"
 #include "ItemDirector.hpp"
 #include "egg/math/eggVector.hpp"
+#include "field/CollisionInfo.hpp"
+#include "field/CourseModel.hpp"
+#include "field/KCollision.hpp"
 #include "geo/BoxColManager.hpp"
 #include "gfx/GFXManager.hpp"
 #include "kart/KartMove.hpp"
 #include "kart/KartObject.hpp"
 #include "kart/KartObjectManager.hpp"
 #include "kart/KartObjectProxy.hpp"
+#include "nw4r/math/mathTriangular.hpp"
 #include "rk_types.h"
 
 namespace Item {
@@ -531,6 +535,146 @@ void ItemObj::handlePlayerCollision(const Kart::KartObject &kart, bool online) {
             collideSomething_807a6ec8(true);
         }
     }
+}
+
+bool CourseModel_checkSpherePartial( 
+    const Field::CourseModel *thisptr,
+    const EGG::Vector3f& pos,
+    const EGG::Vector3f& prevPos,
+    u32 typeMask,
+    Field::ColInfoPartial* colInfo,
+    u32* typeMaskOut,
+    f32 radius,
+    f32 scale,
+    u32 start
+);
+extern Field::ColInfoPartial gColInfo;
+
+inline EGG::Vector3f& fakePlusScale(EGG::Vector3f &out, const EGG::Vector3f &base, const EGG::Vector3f &mover, f32 scalar) {
+    // out = base + (mover * scalar);
+
+    out.x = base.x +  (mover.x * scalar);
+    out.y = base.y +  (mover.y * scalar);
+    out.z = base.z +  (mover.z * scalar);
+
+    // f32 out_x = (mover.x * scalar);
+    // out_x = out_x+ base.x;
+    // f32 out_y = (mover.y * scalar);
+    // out_y = out_y+ base.y;
+    // f32 out_z = (mover.z * scalar);
+    // out_z = out_z+ base.z;
+    // out.x = out_x;
+    // out.y = out_y;
+    // out.z = out_z;
+
+    return out;
+}
+
+void ItemObj::applyRoadCollision(f32 param_1, const EGG::Vector3f &param_3) {
+    
+    // f32 ak =   -mHitboxRadius;
+    // EGG::Vector3f new_pos = param_3*ak;
+    // EGG::Vector3f new_pos = param_3 * -mHitboxRadius;
+    // new_pos *= ak;
+    // new_pos = mTransform.t + new_pos;
+    // new_pos += mTransform.t;
+    // EGG::Vector3f new_pos = mTransform.t + (param_3 * ak);
+    // EGG::Vector3f new_pos = mTransform.t + (param_3 * -mHitboxRadius);
+    // fakePlusScale(new_pos, param_3, -mHitboxRadius);
+
+    f32 radius = mHitboxHeight * 0.01f;
+    EGG::Vector3f new_pos;
+    
+    u32 col;
+    // f32 radius = mHitboxHeight;
+    bool oop = CourseModel_checkSpherePartial(
+        Field::CourseModel::spInstance,
+        // new_pos,
+        fakePlusScale(new_pos, mTransform.t, param_3, -mHitboxRadius),
+        mTransform.t,
+        KCL_TYPE_FLOOR,
+        &gColInfo,
+        &col,
+        mHitboxHeight * 0.01f,
+        radius,
+        _6E
+    );
+    // bool oop = Field::CourseModel::spInstance->checkSpherePartial(
+    //     // new_pos,
+    //     fakePlusScale(new_pos, mTransform.t, param_3, -mHitboxRadius),
+    //     mTransform.t,
+    //     KCL_TYPE_FLOOR,
+    //     &gColInfo, // nullptr,
+    //     &col,
+    //     radius,
+    //     // mHitboxHeight * 0.01f,
+    //     _6E
+    // );
+
+
+    if (oop && ON_BIT(mFlags, x2000)) {
+        mLastYRotation = param_3;
+        mUpdateRes |= 8;
+    } else {
+        f32 cos;
+        f32 sin;
+        f32 eeks = 50 * (1.0f  / 256.0f);
+        nw4r::math::SinCosFIdx(&sin, &cos, mSomeCounter * (eeks));
+        mSpeed.x = sin * 0.5f;
+        mSpeed.z = cos * 0.5f;
+
+        if (mSpeed.y > 0.0f) {
+            mSpeed.y = 0.0f;
+        // } else if (mSpeed.y >= -param_1) {
+        } else if (mSpeed.y < -param_1) {
+            mSpeed.y = -param_1;
+        }
+
+        // if (mSpeed.y >= -param_1) {
+        //     mSpeed.y = -param_1;
+        // } else if (mSpeed.y > 0.0f) {
+        //     mSpeed.y = 0.0f;
+        // }
+        // if (mSpeed.y <= 0.0f) {
+            // if (-param_1 < mSpeed.y) {
+        // } else {
+        // }
+    }
+    
+  
+//   fVar1 = -this->radius0;
+//   local_3c = NONE;
+//   fVar2 = param_3->z * fVar1;
+//   local_38.x = (this->pos).x + param_3->x * fVar1;
+//   local_38.y = (this->pos).y + param_3->y * fVar1;
+//   local_38.z = (this->pos).z + fVar2;
+//   iVar4 = Field::CourseModel::checkSpherePartial
+//                     (this->radius0 * 0.01,fVar2,Field::CourseModel::sInstance,&local_38,&this->pos,
+//                      FLOOR,(CollisionInfoPartial *)0x0,&local_3c,(int)*(short *)&this->field_0x6e);
+//   if (iVar4 == 0) {
+//     SinCosFIdx((float)((short)(this->field90_0x15c).vtbl_offset * 0x32) * 1.0 * 0.00390625,
+//                (double *)&sin,(double *)&cos);
+//     (this->speed).x = sin * 0.5;
+//     (this->speed).z = cos * 0.5;
+//     if ((this->speed).y <= 0.0) {
+//       if (-param_1 < (double)(this->speed).y) {
+//         (this->speed).y = (float)-param_1;
+//       }
+//     }
+//     else {
+//       (this->speed).y = 0.0;
+//     }
+//   }
+//   else if ((this->bitfield_78 & 0x2000) == 0) {
+//     fVar1 = param_3->x;
+//     fVar2 = param_3->y;
+//     fVar3 = param_3->z;
+//     this->bitfield_74 = this->bitfield_74 | 8;
+//     (this->_c8).x = fVar1;
+//     (this->_c8).y = fVar2;
+//     (this->_c8).z = fVar3;
+//   }
+//   return;
 }
 
 } // namespace Item
