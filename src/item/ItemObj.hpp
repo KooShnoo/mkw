@@ -146,6 +146,16 @@ namespace Item {
         void handlePlayerCollision(const Kart::KartObject &kart, bool);
         void applyRoadCollision(f32 param_1, const EGG::Vector3f &param_3);
 
+        void setThrowPosFromMtx(const EGG::Matrix34f &param_2);
+        s32 getActiveTime();
+
+        bool checkWallHitDestruct(const EGG::Vector3f &param_2);
+        f32 fn_807a2edc();
+        void setTransMtx(const RowVec34 &mat);
+
+        ///  for example a bomb makes objs disappear, or a green has bounced too many times with a wall
+        void killFromOtherCollision(bool sendBreakEVENT); // 807a6560, names from pulsar
+
         typedef void (ItemObj::*UpdateFunc)();
         typedef void (ItemObj::*BounceHitFunc)();
     private:
