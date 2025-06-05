@@ -1,8 +1,13 @@
+// fro debugging
+#include "item/BaseItemMath.hpp"
+#pragma sym on
+
 #include <nw4r/math/mathTypes.hpp>
 
 #include "ItemObj.hpp"
 #include "BaseItemData.hpp"
 #include "ItemDirector.hpp"
+#include "egg/math/eggMatrix.hpp"
 #include "egg/math/eggVector.hpp"
 #include "field/CollisionInfo.hpp"
 #include "field/CourseModel.hpp"
@@ -414,7 +419,8 @@ void ItemObj::deregisterBoxCol() {
 
 
 // TODO: migrate to egg TBitFlag or rkbitfield or another thing
-#define ON_BIT(bitfield, mask) ((bitfield & mask) == 0)
+#define ON_BIT(bitfield, mask) (bitfield & mask)
+#define OFF_BIT(bitfield, mask) ((bitfield & mask) != 0)
 
 
 void ItemObj::Spawn(ItemType objId, u8 playerId, const EGG::Vector3f &position, bool r7) {
@@ -423,7 +429,7 @@ void ItemObj::Spawn(ItemType objId, u8 playerId, const EGG::Vector3f &position, 
     mTrailOwnerId = MAX_PLAYER_COUNT;
     SetId(objId);
     draw_8079e38c();
-    if (!ON_BIT(mFlags, 0x1000000)) {
+    if (OFF_BIT(mFlags, 0x1000000)) {
         drawTransform_807a07b8(0);
     } else {
         drawTransform_807a0cd4(0, 0.0f);
@@ -456,8 +462,6 @@ struct EffectInfo {
     static EffectInfo* spInstance; // = (EffectInfo*)0x809c21d0;
 };
 bool checkPrimitiveCollision(Kart::KartAccessor_34* thisptr, ObjectCollisionItem &prim);
-// fro debugging
-#pragma sym on
 
 // wip
 void ItemObj::checkOnlineTargetPlayerCollision() {
@@ -676,5 +680,103 @@ void ItemObj::applyRoadCollision(f32 param_1, const EGG::Vector3f &param_3) {
 //   }
 //   return;
 }
+
+void ItemObj::setThrowPosFromMtx(const EGG::Matrix34f &param_2) {
+    f32 hitboxHeight = mHitboxHeight;
+    f32 throwOfs = -hitboxHeight * 1.3;
+
+
+    // i cannot be bothered to implement whatever method this *actually* is
+
+    f32 _10 = param_2.e._10;
+    f32 _13 = param_2.e._13;
+    f32 _12 = param_2.e._12;
+    f32 _00 = param_2.e._00;
+    f32 _03 = param_2.e._03;
+    f32 _02 = param_2.e._02;
+    f32 _20 = param_2.e._20;
+    f32 _23 = param_2.e._23;
+    f32 _22 = param_2.e._22;
+    mPosStart.z = _23 + mHitboxHeight * _20 + throwOfs * _22;
+    mPosStart.y = _13 + mHitboxHeight * _10 + throwOfs * _12;
+    mPosStart.x = _03 + mHitboxHeight * _00 + throwOfs * _02;
+    return;
+}
+
+s32 fn_807d2ddc(bool); // { return 4; }
+
+s32 ItemObj::getActiveTime() {
+    return mActiveTime - fn_807d2ddc(ON_BIT(mFlags, x20)) + 2;
+}
+
+// void ItemObj::killFromOtherCollision(bool sendBreakEVENT) // 807a6560
+
+bool ItemObj::checkWallHitDestruct(const EGG::Vector3f &param_2) {
+    if (
+        (OFF_BIT(mFlags, x1000) 
+        // || param_2.dot(mSomeRotationVec) >= 0.0f // nope :(
+        // && (EGG::Vector3f::dot(param_2, mSomeRotationVec) < 0.0f) // nope :(
+        && (nw4r::math::VEC3Dot(&param_2, &mSomeRotationVec) < 0.0f) // yes :D
+        // ON_BIT doesn't match :morphoff:
+        && !OFF_BIT(mUpdateRes, 8))
+    ) {
+        killFromOtherCollision(true);
+        return true;
+    }
+
+    return false;
+}
+
+f32 ItemObj::fn_807a2edc() {
+    return mHitboxRadius * ItemData::getDrawDistBack(mItemId);
+}
+
+
+void ItemObj::setTransMtx(const RowVec34 &mat) {
+    float _22 = mat.z.z;
+    float _11 = mat.y.y;
+    float _00 = mat.x.x;
+
+    
+    float _10 = mat.y.x;
+    float _20 = mat.z.x;
+    float _01 = mat.x.y;
+
+    float _21 = mat.z.y;
+    float _02 = mat.x.z;
+    float _12 = mat.y.z;
+    
+    mTransform.x.x = _00;
+    mTransform.x.y = _10;
+    mTransform.x.z = _20;
+    mTransform.y.x = _01;
+    mTransform.y.y = _11;
+    mTransform.y.z = _21;
+    mTransform.z.x = _02;
+    mTransform.z.y = _12;
+    mTransform.z.z = _22;
+
+    // mTransform = mat;
+    // mFlags = (ItemObjFlags1)(mFlags & 0xdeadbeef);
+    // mFlags = (ItemObjFlags1)(mFlags & ~0x1000000);
+    // // mFlags &= ~0x1000000;
+    // mTransform.x.x = mat.x.x;
+    // mTransform.x.y = mat.y.x;
+    // mTransform.x.y = mat.z.x;
+
+    // mTransform.y.x = mat.x.y;
+    // mTransform.y.y = mat.y.y;
+    // mTransform.y.z = mat.z.y;
+    
+    // mTransform.z.x = mat.x.z;
+    // mTransform.z.y = mat.y.z;
+    // mTransform.z.z = mat.z.z;
+    // mTransform.x = mat.x;
+    // mTransform.y = mat.y;
+    // mTransform.z = mat.z;
+    // mTransform.t = mat.t;
+
+}
+
 
 } // namespace Item
